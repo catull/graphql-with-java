@@ -5,7 +5,7 @@ type Query {
   account_by_pk(id: ID): account
   order(limit: Int): [order]!
   order_by_pk(id: ID): order
-  order_details(limit: Int): [order_detail]!
+  order_detail(limit: Int): [order_detail]!
   order_detail_by_pk(id: ID): order_detail
   product(limit: Int): [product]!
   product_by_pk(id: ID): product
