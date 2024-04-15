@@ -27,10 +27,10 @@
 #+reveal_title_slide_background: ./slide_background.png
 
 * 
-#+CAPTION: https://github.com/dventimihasura/davidaventimiglia-talks/tree/master/hasurawebinar_march_2024
+# #+CAPTION: https://github.com/dventimihasura/davidaventimiglia-talks/tree/master/hasurawebinar_march_2024
 #+ATTR_HTML: :width 40%
 #+ATTR_HTML: :height 40%
-[[file:qrcode_github.com.png]]
+# [[file:qrcode_github.com.png]]
 
 * What
 
@@ -83,30 +83,22 @@ And let's see what works and what doesn't.
 
 * Steps
 
-** Step 1:  Check out the ~ [[https://github.com/dventimihasura/davidaventimiglia-talks][davidaventimiglia-talks]] ~ repository.
+** Step 1:  Clone this repository.
 
 #+begin_src bash
-  git checkout \
-      https://github.com/dventimihasura/davidaventimiglia-talks.git
+  git clone git@github.com:dventimihasura/graphqljava-tutorial.git
 #+end_src
 
-** Step 2:  Navigate to ~ [[file:hasurawebinar_march_2024][hasurawebinar_march_2024]] ~ sub-directory.
-
-#+begin_src bash
-  cd hasurawebinar_march_2024
-#+end_src
-
-** Step 3:  Create a ~setenv.sh~ file.
+** Step 2:  Create a ~setenv.sh~ file.
 
 #+begin_src bash
   cat <<EOF > setenv.sh
-  export HGEPORT=8081
-  export PGDATABASE=postgres
-  export PGHOST=localhost
-  export PGPASSWORD=postgres
-  export PGPORT=5433
-  export PGUSER=postgres
-  export SBPORT=8080
+  export PGDATABASE=<your PostgreSQL database>
+  export PGHOST=<your PostgreSQL host>
+  export PGPASSWORD=<your PostgreSQL password>
+  export PGPORT=<your PostgreSQL port>
+  export PGUSER=<your PostgreSQL user>
+  export SBPORT=<your Spring Boot port>
   EOF
 #+end_src
 
@@ -128,12 +120,6 @@ or
 
 #+begin_src bash
   docker compose up -d
-#+end_src
-
-** Step 6:  Launch the Spring Boot application.
-
-#+begin_src bash
-  mvn clean spring-boot:run
 #+end_src
 
 * Tests
