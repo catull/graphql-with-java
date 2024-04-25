@@ -1,3 +1,3 @@
 -- -*- sql-product: postgres; -*-
 
-CREATE DATABASE chinook;
+-- CREATE DATABASE chinook;

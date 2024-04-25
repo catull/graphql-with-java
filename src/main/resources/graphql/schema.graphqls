@@ -9,6 +9,7 @@ type Query {
   order_detail_by_pk(id: ID): order_detail
   product(limit: Int): [product]!
   product_by_pk(id: ID): product
+  Artist(limit: Int): [Artist]!
 }
 
 type account {
@@ -47,4 +48,9 @@ type product {
   created_at: String
   updated_at: String
   order_details(limit: Int): [order_detail]!
+}
+
+type Artist {
+  ArtistId: Int
+  Name: String
 }
