@@ -2,7 +2,7 @@ package com.graphqljava.tutorial.retail.models;
 
 import java.util.UUID;
 
-public class Schema {
+public class RetailModels {
     public static
 	record account
 	(UUID id,

@@ -14,13 +14,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
+import com.graphqljava.tutorial.retail.models.RetailModels.account;
+import com.graphqljava.tutorial.retail.models.RetailModels.order;
+import com.graphqljava.tutorial.retail.models.RetailModels.order_detail;
+import com.graphqljava.tutorial.retail.models.RetailModels.product;
 
-import com.graphqljava.tutorial.retail.models.Schema.account;
-import com.graphqljava.tutorial.retail.models.Schema.order;
-import com.graphqljava.tutorial.retail.models.Schema.order_detail;
-import com.graphqljava.tutorial.retail.models.Schema.product;
-
-public class Controllers {
+public class RetailControllers {
     @Controller public static class AccountController {
 	@Autowired JdbcClient jdbcClient;
 
