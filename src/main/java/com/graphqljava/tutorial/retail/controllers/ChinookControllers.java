@@ -433,24 +433,24 @@ public class ChinookControllers {
 	    return IntStream.range(0, keys.size()).boxed()
 		.collect(Collectors.toMap(keys::get, values::get));
 	}
-	@BatchMapping
-	public Map<Album, List<Track>> Tracks (List<Album> albums) {
-	    return jdbcClient
-		.sql("select * from \"Track\" where \"AlbumId\" in (:ids)")
-		.param("ids", albums.stream().map(x -> x.AlbumId()).toList())
-		.query(mapper)
-		.list().stream().collect(Collectors.groupingBy(x -> albums.stream().collect(Collectors.groupingBy(Album::AlbumId)).get(x.AlbumId()).getFirst()));
-	}
-	// @SchemaMapping List<Track>
-	//     Tracks (Album album, ArgumentValue<Integer> limit) {
-	//     StatementSpec
-	// 	spec = limit.isOmitted() ?
-	// 	jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ?").param(album.AlbumId()) :
-	// 	jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ? limit ?").param(album.AlbumId()).param(limit.value());
-	//     return
-	// 	spec
+	// @BatchMapping
+	// public Map<Album, List<Track>> Tracks (List<Album> albums) {
+	//     return jdbcClient
+	// 	.sql("select * from \"Track\" where \"AlbumId\" in (:ids)")
+	// 	.param("ids", albums.stream().map(x -> x.AlbumId()).toList())
 	// 	.query(mapper)
-	// 	.list();}
+	// 	.list().stream().collect(Collectors.groupingBy(x -> albums.stream().collect(Collectors.groupingBy(Album::AlbumId)).get(x.AlbumId()).getFirst()));
+	// }
+	@SchemaMapping List<Track>
+	    Tracks (Album album, ArgumentValue<Integer> limit) {
+	    StatementSpec
+		spec = limit.isOmitted() ?
+		jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ?").param(album.AlbumId()) :
+		jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ? limit ?").param(album.AlbumId()).param(limit.value());
+	    return
+		spec
+		.query(mapper)
+		.list();}
 	@SchemaMapping List<Track>
 	    Tracks (Genre genre, ArgumentValue<Integer> limit) {
 	    StatementSpec

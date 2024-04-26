@@ -69,7 +69,7 @@ type Album {
   Title    : String
   ArtistId : Int
   Artist   : Artist
-  Tracks   : [Track]!
+  Tracks(limit: Int)   : [Track]!
 }
 
 type Artist {
