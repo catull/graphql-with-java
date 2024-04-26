@@ -2,12 +2,20 @@ package com.graphqljava.tutorial.retail.controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.ArgumentValue;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.graphql.execution.BatchLoaderRegistry;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
@@ -15,9 +23,10 @@ import org.springframework.stereotype.Controller;
 
 import com.graphqljava.tutorial.retail.models.ChinookModels.*;
 
+import reactor.core.publisher.Mono;
+
 public class ChinookControllers {
-    @Controller
-    public static class ArtistController {
+    @Controller public static class ArtistController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Artist>
 	    mapper = new RowMapper<>() {
@@ -25,8 +34,7 @@ public class ChinookControllers {
 			return
 			new Artist(rs.getInt("ArtistId"),
 				   rs.getString("Name"));}};
-	@SchemaMapping
-	Artist Artist (Album album) {
+	@SchemaMapping Artist Artist (Album album) {
 	    return
 		jdbcClient
 		.sql("select * from \"Artist\" where \"ArtistId\" = ? limit 1")
@@ -34,8 +42,7 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@QueryMapping
-	List<Artist>
+	@QueryMapping List<Artist>
 	    Artist (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -45,8 +52,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class AlbumController {
+    @Controller public static class AlbumController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Album>
 	    mapper = new RowMapper<>() {
@@ -57,8 +63,7 @@ public class ChinookControllers {
 				  rs.getString("Title"),
 				  rs.getInt("ArtistId")
 				  );}};
-	@SchemaMapping
-	Album Album (Track track) {
+	@SchemaMapping Album Album (Track track) {
 	    return
 		jdbcClient
 		.sql("select * from \"Album\" where \"AlbumId\" = ? limit 1")
@@ -76,8 +81,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping
-	List<Album>
+	@QueryMapping List<Album>
 	    Album (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -87,8 +91,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class CustomerController {
+    @Controller public static class CustomerController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Customer>
 	    mapper = new RowMapper<>() {
@@ -119,8 +122,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping
-	List<Customer>
+	@QueryMapping List<Customer>
 	    Customer (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -130,8 +132,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class EmployeeController {
+    @Controller public static class EmployeeController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Employee>
 	    mapper = new RowMapper<>() {
@@ -154,8 +155,7 @@ public class ChinookControllers {
 				     rs.getString("Fax"),
 				     rs.getString("Email")
 				     );}};
-	@SchemaMapping
-	Employee Employee (Customer customer) {
+	@SchemaMapping Employee Employee (Customer customer) {
 	    return
 		jdbcClient
 		.sql("select * from \"Employee\" where \"EmployeeId\" = ? limit 1")
@@ -163,8 +163,7 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@SchemaMapping
-	Employee Manager (Employee employee) {
+	@SchemaMapping Employee Manager (Employee employee) {
 	    return
 		jdbcClient
 		.sql("select * from \"Employee\" where \"EmployeeId\" = ? limit 1")
@@ -182,8 +181,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping
-	List<Employee>
+	@QueryMapping List<Employee>
 	    Employee (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -193,8 +191,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class GenreController {
+    @Controller public static class GenreController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Genre>
 	    mapper = new RowMapper<>() {
@@ -204,8 +201,7 @@ public class ChinookControllers {
 				  rs.getInt("GenreId"),
 				  rs.getString("Name")
 				  );}};
-	@SchemaMapping
-	Genre Genre (Track track) {
+	@SchemaMapping Genre Genre (Track track) {
 	    return
 		jdbcClient
 		.sql("select * from \"Genre\" where \"GenreId\" = ? limit 1")
@@ -213,8 +209,7 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@QueryMapping
-	List<Genre>
+	@QueryMapping List<Genre>
 	    Genre (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -224,8 +219,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class InvoiceController {
+    @Controller public static class InvoiceController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Invoice>
 	    mapper = new RowMapper<>() {
@@ -242,8 +236,7 @@ public class ChinookControllers {
 				    rs.getString("BillingPostalCode"),
 				    rs.getFloat("Total")
 				    );}};
-	@SchemaMapping
-	Invoice Invoice (InvoiceLine invoiceLine) {
+	@SchemaMapping Invoice Invoice (InvoiceLine invoiceLine) {
 	    return
 		jdbcClient
 		.sql("select * from \"Invoice\" where \"InvoiceId\" = ? limit 1")
@@ -261,8 +254,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping
-	List<Invoice>
+	@QueryMapping List<Invoice>
 	    Invoice (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -272,8 +264,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class InvoiceLineController {
+    @Controller public static class InvoiceLineController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<InvoiceLine>
 	    mapper = new RowMapper<>() {
@@ -306,8 +297,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping
-	List<InvoiceLine>
+	@QueryMapping List<InvoiceLine>
 	    InvoiceLine (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -317,8 +307,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class MediaTypeController {
+    @Controller public static class MediaTypeController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<MediaType>
 	    mapper = new RowMapper<>() {
@@ -328,8 +317,7 @@ public class ChinookControllers {
 				      rs.getInt("MediaTypeId"),
 				      rs.getString("Name")
 				      );}};
-	@SchemaMapping
-	MediaType MediaType (Track track) {
+	@SchemaMapping MediaType MediaType (Track track) {
 	    return
 		jdbcClient
 		.sql("select * from \"MediaType\" where \"MediaTypeId\" = ? limit 1")
@@ -337,8 +325,7 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@QueryMapping
-	List<MediaType>
+	@QueryMapping List<MediaType>
 	    MediaType (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -348,8 +335,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class PlaylistController {
+    @Controller public static class PlaylistController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Playlist>
 	    mapper = new RowMapper<>() {
@@ -359,8 +345,7 @@ public class ChinookControllers {
 				     rs.getInt("PlaylistId"),
 				     rs.getString("Name")
 				     );}};
-	@SchemaMapping
-	Playlist Playlist (PlaylistTrack playlistTrack) {
+	@SchemaMapping Playlist Playlist (PlaylistTrack playlistTrack) {
 	    return
 		jdbcClient
 		.sql("select * from \"Playlist\" where \"PlaylistId\" = ? limit 1")
@@ -368,8 +353,7 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@QueryMapping
-	List<Playlist>
+	@QueryMapping List<Playlist>
 	    Playlist (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -379,8 +363,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class PlaylistTrackController {
+    @Controller public static class PlaylistTrackController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<PlaylistTrack>
 	    mapper = new RowMapper<>() {
@@ -410,8 +393,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping
-	List<PlaylistTrack>
+	@QueryMapping List<PlaylistTrack>
 	    PlaylistTrack (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
@@ -421,8 +403,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}}
-    @Controller
-    public static class TrackController {
+    @Controller public static class TrackController {
 	@Autowired JdbcClient jdbcClient;
 	RowMapper<Track>
 	    mapper = new RowMapper<>() {
@@ -439,8 +420,7 @@ public class ChinookControllers {
 				  rs.getInt("Bytes"),
 				  rs.getFloat("UnitPrice")
 				  );}};
-	@SchemaMapping
-	Track Track (InvoiceLine invoiceLine) {
+	@SchemaMapping Track Track (InvoiceLine invoiceLine) {
 	    return
 		jdbcClient
 		.sql("select * from \"Track\" where \"TrackId\" = ? limit 1")
@@ -448,16 +428,29 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@SchemaMapping List<Track>
-	    Tracks (Album album, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ?").param(album.AlbumId()) :
-		jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ? limit ?").param(album.AlbumId()).param(limit.value());
-	    return
-		spec
+
+	public static <K, V> Map<K, V> zipToMap(List<K> keys, List<V> values) {
+	    return IntStream.range(0, keys.size()).boxed()
+		.collect(Collectors.toMap(keys::get, values::get));
+	}
+	@BatchMapping
+	public Map<Album, List<Track>> Tracks (List<Album> albums) {
+	    return jdbcClient
+		.sql("select * from \"Track\" where \"AlbumId\" in (:ids)")
+		.param("ids", albums.stream().map(x -> x.AlbumId()).toList())
 		.query(mapper)
-		.list();}
+		.list().stream().collect(Collectors.groupingBy(x -> albums.stream().collect(Collectors.groupingBy(Album::AlbumId)).get(x.AlbumId()).getFirst()));
+	}
+	// @SchemaMapping List<Track>
+	//     Tracks (Album album, ArgumentValue<Integer> limit) {
+	//     StatementSpec
+	// 	spec = limit.isOmitted() ?
+	// 	jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ?").param(album.AlbumId()) :
+	// 	jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ? limit ?").param(album.AlbumId()).param(limit.value());
+	//     return
+	// 	spec
+	// 	.query(mapper)
+	// 	.list();}
 	@SchemaMapping List<Track>
 	    Tracks (Genre genre, ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -478,8 +471,7 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping
-	List<Track>
+	@QueryMapping List<Track>
 	    Track (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
