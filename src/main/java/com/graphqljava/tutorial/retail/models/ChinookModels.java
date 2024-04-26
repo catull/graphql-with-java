@@ -103,6 +103,7 @@ public class ChinookModels {
 		      Integer TrackId,
 		      String Name,
 		      Integer AlbumId,
+		      Integer MediaTypeId,
 		      Integer GenreId,
 		      String Composer,
 		      Integer Milliseconds,

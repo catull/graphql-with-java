@@ -10,6 +10,16 @@ type Query {
   product(limit: Int): [product]!
   product_by_pk(id: ID): product
   Artist(limit: Int): [Artist]!
+  Album(limit: Int): [Album]!
+  Track(limit: Int): [Track]!
+  Playlist(limit: Int): [Playlist]!
+  PlaylistTrack(limit: Int): [PlaylistTrack]!
+  Genre(limit: Int): [Genre]!
+  MediaType(limit: Int): [MediaType]!
+  Customer(limit: Int): [Customer]!
+  Employee(limit: Int): [Employee]!
+  Invoice(limit: Int): [Invoice]!
+  InvoiceLine(limit: Int): [InvoiceLine]!
 }
 
 # Retail
@@ -58,11 +68,14 @@ type Album {
   AlbumId  : Int
   Title    : String
   ArtistId : Int
+  Artist   : Artist
+  Tracks(limit: Int)   : [Track]!
 }
 
 type Artist {
   ArtistId: Int
   Name: String
+  Albums(limit: Int): [Album]!
 }
 
 type Customer {
@@ -79,6 +92,8 @@ type Customer {
   Fax          : String
   Email        : String
   SupportRepId : Int
+  SupportRep   : Employee
+  Invoices(limit: Int)     : [Invoice]!
 }
 
 type Employee {
@@ -97,11 +112,15 @@ type Employee {
   Phone      : String
   Fax        : String
   Email      : String
+  Customers(limit: Int)  : [Customer]!
+  Manager    : Employee
+  Reports(limit: Int)    : [Employee]!
 }
 
 type Genre {
   GenreId : Int
   Name    : String
+  Tracks(limit: Int)  : [Track]!
 }
 
 type Invoice {
@@ -114,6 +133,8 @@ type Invoice {
   BillingCountry    : String
   BillingPostalCode : String
   Total             : Float
+  InvoiceLines(limit: Int)      : [InvoiceLine]!
+  Customer          : Customer
 }
 
 type InvoiceLine {
@@ -122,22 +143,27 @@ type InvoiceLine {
   TrackId       : Int
   UnitPrice     : Float
   Quantity      : Int
+  Track         : Track
+  Invoice       : Invoice
 }
 
 type MediaType {
   MediaTypeId : Int
   Name        : String
+  Tracks(limit: Int)      : [Track]!
 }
 
 type Playlist {
   PlaylistId : Int
   Name       : String
-
+  PlaylistTracks(limit: Int) : [PlaylistTrack]!
 }
 
 type PlaylistTrack {
   PlaylistId : Int
   TrackId    : Int
+  Playlist   : Playlist
+  Track      : Track
 }
 
 type Track {
@@ -150,4 +176,9 @@ type Track {
   Milliseconds : Int
   Bytes        : Int
   UnitPrice    : Float
+  Album        : Album
+  PlaylistTracks(limit: Int) : [PlaylistTrack]!
+  MediaType    : MediaType
+  Genre        : Genre
+  InvoiceLines(limit: Int) : [InvoiceLine]!
 }
