@@ -1,72 +1,20 @@
 # -*- mode: graphql; -*-
 
-type Query {
-  account(limit: Int): [account]!
-  account_by_pk(id: ID): account
-  order(limit: Int): [order]!
-  order_by_pk(id: ID): order
-  order_detail(limit: Int): [order_detail]!
-  order_detail_by_pk(id: ID): order_detail
-  product(limit: Int): [product]!
-  product_by_pk(id: ID): product
-  Artist(limit: Int): [Artist]!
-}
-
-# Retail
-
-type account {
-  id: ID
-  name: String
-  created_at: String
-  updated_at: String
-  orders(limit: Int): [order]!
-}
-
-type order {
-  id: ID
-  account_id: ID
-  status: String
-  created_at: String
-  updated_at: String
-  order_details(limit: Int): [order_detail]!
-  account: account!
-}
-
-type order_detail {
-  id: ID
-  order_id: ID
-  product_id: ID
-  units: Int
-  created_at: String
-  updated_at: String
-  product: product!
-  order: order!
-}
-
-type product {
-  id: ID
-  name: String
-  price: Int
-  created_at: String
-  updated_at: String
-  order_details(limit: Int): [order_detail]!
-}
-
 # Chinook
 
 type Album {
-  AlbumId  : Int
+  AlbumId  : ID
   Title    : String
   ArtistId : Int
 }
 
 type Artist {
-  ArtistId: Int
+  ArtistId: ID
   Name: String
 }
 
 type Customer {
-  CustomerId   : Int
+  CustomerId   : ID
   FirstName    : String
   LastName     : String
   Company      : String
@@ -82,7 +30,7 @@ type Customer {
 }
 
 type Employee {
-  EmployeeId : Int
+  EmployeeId : ID
   LastName   : String
   FirstName  : String
   Title      : String
@@ -100,13 +48,13 @@ type Employee {
 }
 
 type Genre {
-  GenreId : Int
+  GenreId : ID
   Name    : String
 }
 
 type Invoice {
-  InvoiceId         : Int
-  CustomerId        : Int
+  InvoiceId         : ID
+  CustomerId        : ID
   InvoiceDate       : String
   BillingAddress    : String
   BillingCity       : String
@@ -117,35 +65,35 @@ type Invoice {
 }
 
 type InvoiceLine {
-  InvoiceLineId : Int
-  InvoiceId     : Int
-  TrackId       : Int
+  InvoiceLineId : ID
+  InvoiceId     : ID
+  TrackId       : ID
   UnitPrice     : Float
   Quantity      : Int
 }
 
 type MediaType {
-  MediaTypeId : Int
+  MediaTypeId : ID
   Name        : String
 }
 
 type Playlist {
-  PlaylistId : Int
+  PlaylistId : ID
   Name       : String
 
 }
 
 type PlaylistTrack {
-  PlaylistId : Int
+  PlaylistId : ID
   TrackId    : Int
 }
 
 type Track {
-  TrackId      : Int
+  TrackId      : ID
   Name         : String
-  AlbumId      : Int
-  MediaTypeId  : Int
-  GenreId      : Int
+  AlbumId      : ID
+  MediaTypeId  : ID
+  GenreId      : ID
   Composer     : String
   Milliseconds : Int
   Bytes        : Int
