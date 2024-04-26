@@ -2,28 +2,32 @@ package com.graphqljava.tutorial.retail.controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.ArgumentValue;
-import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
-import org.springframework.graphql.execution.BatchLoaderRegistry;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
 
-import com.graphqljava.tutorial.retail.models.ChinookModels.*;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Album;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Artist;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Customer;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Employee;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Genre;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Invoice;
+import com.graphqljava.tutorial.retail.models.ChinookModels.InvoiceLine;
+import com.graphqljava.tutorial.retail.models.ChinookModels.MediaType;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Playlist;
+import com.graphqljava.tutorial.retail.models.ChinookModels.PlaylistTrack;
+import com.graphqljava.tutorial.retail.models.ChinookModels.Track;
 
-import reactor.core.publisher.Mono;
 
 public class ChinookControllers {
     @Controller public static class ArtistController {
