@@ -1,0 +1,45 @@
+# -*- mode: graphql; -*-
+
+# Retail
+
+type account {
+  id        : ID!
+  name      : String
+  created_at: String
+  updated_at: String
+  # relations
+  orders(input: AccountInput): [order]
+}
+
+type order {
+  id        : ID!
+  account_id: ID
+  status    : String
+  created_at: String
+  updated_at: String
+  # relations
+  account(input: AccountInput): account
+  order_details(input: OrderDetailInput): [order_detail]
+}
+
+type order_detail {
+  id        : ID!
+  order_id  : ID
+  product_id: ID
+  units     : Int
+  created_at: String
+  updated_at: String
+  # relations
+  product(input: ProductInput): product
+  order(input: OrderInput): order
+}
+
+type product {
+  id        : ID!
+  name      : String
+  price     : Int
+  created_at: String
+  updated_at: String
+  # relations
+  order_details(input: OrderDetailInput): [order_detail]
+}

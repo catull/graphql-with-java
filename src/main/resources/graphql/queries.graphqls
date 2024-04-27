@@ -3,50 +3,35 @@
 type Query {
     # Retail
 
-    account(limit: Int): [account]!
-    account_by_pk(id: ID): account
+    accounts(input: AccountInput): [account]
 
-    order(limit: Int): [order]!
-    order_by_pk(id: ID): order
+    orders(input: OrderInput): [order]
 
-    order_detail(limit: Int): [order_detail]!
-    order_detail_by_pk(id: ID): order_detail
+    order_details(input: OrderDetailInput): [order_detail]
 
-    product(limit: Int): [product]!
-    product_by_pk(id: ID): product
+    products(input: ProductInput): [product]
 
     # Chinook
 
-    Album(limit: Int): [Album]
-    Album_by_pk(id: ID!): Album
+    Albums(input: AlbumInput): [Album]
 
-    Artist(limit: Int): [Artist]
-    Artist_by_pk(id: ID!): Artist
+    Artists(input: ArtistInput): [Artist]
 
-    Customer(limit: Int): [Customer]
-    Customer_by_pk(id: ID!): Customer
+    Customers(input: CustomerInput): [Customer]
 
-    Employee(limit: Int): [Employee]
-    Employee_by_pk(id: ID!): Employee
+    Employees(input: EmployeeInput): [Employee]
 
-    Genre(limit: Int): [Genre]
-    Genre_by_pk(id: ID!): Genre
+    Genres(input: GenreInput): [Genre]
 
-    Invoice(limit: Int): [Invoice]
-    Invoice_by_pk(id: ID!): Invoice
+    Invoices(input: InvoiceInput): [Invoice]
 
-    InvoiceLine(limit: Int): [InvoiceLine]
-    InvoiceLine_by_pk(id: ID!): InvoiceLine
+    InvoiceLines(input: InvoiceLineInput): [InvoiceLine]
 
-    MediaType(limit: Int): [MediaType]
-    MediaType_by_pk(id: ID!): MediaType
+    MediaTypes(input: MediaTypeInput): [MediaType]
 
-    Playlist(limit: Int): [Playlist]
-    Playlist_by_pk(id: ID!): Playlist
+    Playlists(input: PlaylistInput): [Playlist]
 
-    PlaylistTrack(limit: Int): [PlaylistTrack]
-    PlaylistTrack_by_pk(id: ID!): PlaylistTrack
+    PlaylistTracks(input: PlaylistTrackInput): [PlaylistTrack]
 
-    Track(limit: Int): [Track]
-    Track_by_pk(id: ID!): Track
+    Tracks(input: TrackInput): [Track]
 }

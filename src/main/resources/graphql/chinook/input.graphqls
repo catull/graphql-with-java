@@ -2,18 +2,20 @@
 
 # Chinook
 
-type Album {
+input AlbumInput {
   AlbumId  : ID
   Title    : String
   ArtistId : Int
+  limit    : Int
 }
 
-type Artist {
+input ArtistInput {
   ArtistId: ID
-  Name: String
+  Name    : String
+  limit   : Int
 }
 
-type Customer {
+input CustomerInput {
   CustomerId   : ID
   FirstName    : String
   LastName     : String
@@ -27,9 +29,10 @@ type Customer {
   Fax          : String
   Email        : String
   SupportRepId : Int
+  limit        : Int
 }
 
-type Employee {
+input EmployeeInput {
   EmployeeId : ID
   LastName   : String
   FirstName  : String
@@ -45,14 +48,16 @@ type Employee {
   Phone      : String
   Fax        : String
   Email      : String
+  limit      : Int
 }
 
-type Genre {
+input GenreInput {
   GenreId : ID
   Name    : String
+  limit   : Int
 }
 
-type Invoice {
+input InvoiceInput {
   InvoiceId         : ID
   CustomerId        : ID
   InvoiceDate       : String
@@ -62,33 +67,37 @@ type Invoice {
   BillingCountry    : String
   BillingPostalCode : String
   Total             : Float
+  limit             : Int
 }
 
-type InvoiceLine {
+input InvoiceLineInput {
   InvoiceLineId : ID
   InvoiceId     : ID
   TrackId       : ID
   UnitPrice     : Float
   Quantity      : Int
+  limit         : Int
 }
 
-type MediaType {
+input MediaTypeInput {
   MediaTypeId : ID
   Name        : String
+  limit       : Int
 }
 
-type Playlist {
+input PlaylistInput {
   PlaylistId : ID
   Name       : String
-
+  limit      : Int
 }
 
-type PlaylistTrack {
+input PlaylistTrackInput {
   PlaylistId : ID
   TrackId    : Int
+  limit      : Int
 }
 
-type Track {
+input TrackInput {
   TrackId      : ID
   Name         : String
   AlbumId      : ID
@@ -98,4 +107,5 @@ type Track {
   Milliseconds : Int
   Bytes        : Int
   UnitPrice    : Float
+  limit        : Int
 }

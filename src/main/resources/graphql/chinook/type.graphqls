@@ -1,0 +1,100 @@
+# -*- mode: graphql; -*-
+
+# Chinook
+
+type Album {
+  AlbumId  : ID!
+  Title    : String
+  ArtistId : Int
+}
+
+type Artist {
+  ArtistId: ID!
+  Name    : String
+}
+
+type Customer {
+  CustomerId   : ID!
+  FirstName    : String
+  LastName     : String
+  Company      : String
+  Address      : String
+  City         : String
+  State        : String
+  Country      : String
+  PostalCode   : String
+  Phone        : String
+  Fax          : String
+  Email        : String
+  SupportRepId : Int
+}
+
+type Employee {
+  EmployeeId : ID!
+  LastName   : String
+  FirstName  : String
+  Title      : String
+  ReportsTo  : Int
+  BirthDate  : String
+  HireDate   : String
+  Address    : String
+  City       : String
+  State      : String
+  Country    : String
+  PostalCode : String
+  Phone      : String
+  Fax        : String
+  Email      : String
+}
+
+type Genre {
+  GenreId : ID!
+  Name    : String
+}
+
+type Invoice {
+  InvoiceId         : ID!
+  CustomerId        : ID
+  InvoiceDate       : String
+  BillingAddress    : String
+  BillingCity       : String
+  BillingState      : String
+  BillingCountry    : String
+  BillingPostalCode : String
+  Total             : Float
+}
+
+type InvoiceLine {
+  InvoiceLineId : ID!
+  InvoiceId     : ID
+  TrackId       : ID
+  UnitPrice     : Float
+  Quantity      : Int
+}
+
+type MediaType {
+  MediaTypeId : ID!
+  Name        : String
+}
+
+type Playlist {
+  PlaylistId : ID!
+  Name       : String
+}
+
+type PlaylistTrack {
+  PlaylistId : ID!
+  TrackId    : Int
+}
+
+type Track {
+  TrackId      : ID!
+  Name         : String
+  AlbumId      : ID
+  MediaTypeId  : ID
+  GenreId      : ID
+  Composer     : String
+  Milliseconds : Int
+  Bytes        : Int
+  UnitPrice    : Float
+}
