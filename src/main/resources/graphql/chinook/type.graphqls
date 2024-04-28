@@ -5,15 +5,17 @@
 type Album {
   AlbumId  : ID!
   Title    : String
-  ArtistId : Int
-  Artist   : Artist
-  Tracks(limit: Int): [Track]
+  ArtistId : ID
+  # relations
+  Artist(input: ArtistInput): Artist
+  Tracks(input: TrackInput): [Track]
 }
 
 type Artist {
   ArtistId: ID!
   Name    : String
-  Albums(limit: Int): [Album]
+  # relations
+  Albums(input: AlbumInput): [Album]
 }
 
 type Customer {
@@ -29,9 +31,10 @@ type Customer {
   Phone        : String
   Fax          : String
   Email        : String
-  SupportRepId : Int
-  SupportRep   : Employee
-  Invoices(limit: Int): [Invoice]
+  SupportRepId : ID
+  # relations
+  Invoices(input: InvoiceInput): [Invoice]
+  SupportRep(input: EmployeeInput): Employee
 }
 
 type Employee {
@@ -39,7 +42,7 @@ type Employee {
   LastName   : String
   FirstName  : String
   Title      : String
-  ReportsTo  : Int
+  ReportsTo  : ID
   BirthDate  : String
   HireDate   : String
   Address    : String
@@ -50,15 +53,17 @@ type Employee {
   Phone      : String
   Fax        : String
   Email      : String
-  Customers(limit: Int): [Customer]
-  Manager    : Employee
-  Reports(limit: Int): [Employee]
+  # relations
+  Customers(input: CustomerInput): [Customer]
+  Manager(input: EmployeeInput): Employee
+  Reports(input: EmployeeInput): [Employee]
 }
 
 type Genre {
   GenreId : ID!
   Name    : String
-  Tracks(limit: Int)  : [Track]
+  # relations
+  Tracks(input: TrackInput): [Track]
 }
 
 type Invoice {
@@ -71,8 +76,9 @@ type Invoice {
   BillingCountry    : String
   BillingPostalCode : String
   Total             : Float
-  InvoiceLines(limit: Int): [InvoiceLine]
-  Customer          : Customer
+  # relations
+  Customer(input: CustomerInput): Customer
+  InvoiceLines(input: InvoiceLineInput): [InvoiceLine]
 }
 
 type InvoiceLine {
@@ -81,27 +87,31 @@ type InvoiceLine {
   TrackId       : ID
   UnitPrice     : Float
   Quantity      : Int
-  Track         : Track
-  Invoice       : Invoice
+  # relations
+  Invoice(input: InvoiceInput): Invoice
+  Track(input: TrackInput): Track
 }
 
 type MediaType {
   MediaTypeId : ID!
   Name        : String
-  Tracks(limit: Int): [Track]
+  # relations
+  Tracks(input: TrackInput): [Track]
 }
 
 type Playlist {
   PlaylistId : ID!
   Name       : String
-  PlaylistTracks(limit: Int) : [PlaylistTrack]
+  # relations
+  PlaylistTracks(input: PlaylistTrackInput) : [PlaylistTrack]
 }
 
 type PlaylistTrack {
   PlaylistId : ID!
-  TrackId    : Int
-  Playlist   : Playlist
-  Track      : Track
+  TrackId    : ID
+  # relations
+  Playlist(input: PlaylistInput): Playlist
+  Track(input: TrackInput): Track
 }
 
 type Track {
@@ -114,9 +124,10 @@ type Track {
   Milliseconds : Int
   Bytes        : Int
   UnitPrice    : Float
-  Album        : Album
-  PlaylistTracks(limit: Int): [PlaylistTrack]
-  MediaType    : MediaType
-  Genre        : Genre
-  InvoiceLines(limit: Int): [InvoiceLine]
+  # relations
+  Album(input: AlbumInput): Album
+  Genre(input: GenreInput): Genre
+  InvoiceLines(input: InvoiceLineInput): [InvoiceLine]
+  MediaType(input: MediaTypeInput): MediaType
+  PlaylistTracks(input: PlaylistTrackInput) : [PlaylistTrack]
 }
