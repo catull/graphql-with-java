@@ -28,23 +28,6 @@ export const options = {
 };
 
 const query = `
-query {
-  order(limit: 10) {
-    id
-    status
-    account {
-      id
-      name 
-    }
-    order_details {
-      units
-      product {
-        name
-        price
-      }
-    }
-  }
-}
 `;
 
 const headers = {

@@ -28,15 +28,6 @@ export const options = {
 };
 
 const query = `
-query {
-  product_by_pk(id: "fc0fb87b-b184-4736-8a24-6c5a483d0ef3") {
-    id
-    name
-    price
-    created_at
-    updated_at
-  }
-}
 `;
 
 const headers = {

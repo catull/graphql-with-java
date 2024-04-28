@@ -10,16 +10,27 @@ type Query {
   product(limit: Int): [product]
   product_by_pk(id: ID): product
   Artist(limit: Int): [Artist]
+  ArtistById(id: Int): Artist
   Album(limit: Int): [Album]
+  AlbumById(id: Int): Album
   Track(limit: Int): [Track]
+  TrackById(id: Int): Track
   Playlist(limit: Int): [Playlist]
+  PlaylistById(id: Int): Playlist
   PlaylistTrack(limit: Int): [PlaylistTrack]
+  PlaylistTrackById(id: Int): PlaylistTrack
   Genre(limit: Int): [Genre]
+  GenreById(id: Int): Genre
   MediaType(limit: Int): [MediaType]
+  MediaTypeById(id: Int): MediaType
   Customer(limit: Int): [Customer]
+  CustoemrById(id: Int): Customer
   Employee(limit: Int): [Employee]
+  EmployeeById(id: Int): Employee
   Invoice(limit: Int): [Invoice]
+  InvoiceById(id: Int): Invoice
   InvoiceLine(limit: Int): [InvoiceLine]
+  InvoiceLineById(id: Int): InvoiceLine
 }
 
 # Retail

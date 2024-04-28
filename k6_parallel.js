@@ -29,32 +29,14 @@ export const options = {
 
 const query = `
 query {
-  account(limit: 10) {
-    id
-    name
-    created_at
-    updated_at
+  Artist(limit: 10) {
+    ArtistId
   }
-  order(limit: 10) {
-    id
-    account_id
-    status
-    created_at
-    updated_at
+  Album(limit: 10) {
+    AlbumId
   }
-  order_detail(limit: 10) {
-    id
-    order_id
-    product_id
-    created_at
-    updated_at
-  }
-  product(limit: 10) {
-    id
-    name
-    price
-    created_at
-    updated_at
+  Track(limit: 10) {
+    TrackId
   }
 }
 `;

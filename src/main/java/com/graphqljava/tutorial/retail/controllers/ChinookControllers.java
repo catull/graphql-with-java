@@ -46,6 +46,10 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
+	@QueryMapping(name = "ArtistById") Artist
+	    artistById (ArgumentValue<Integer> id) {
+	    for (Artist a : jdbcClient.sql("select * from \"Artist\" where \"ArtistId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "Artist") List<Artist>
 	    artist (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -83,6 +87,10 @@ public class ChinookControllers {
 		.list()
 		.stream()
 		.collect(Collectors.groupingBy(x -> artists.stream().collect(Collectors.groupingBy(Artist::ArtistId)).get(x.ArtistId()).getFirst()));}
+	@QueryMapping(name = "AlbumById") Album
+	    albumById (ArgumentValue<Integer> id) {
+	    for (Album a : jdbcClient.sql("select * from \"Album\" where \"AlbumId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "Album") List<Album>
 	    album (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -122,6 +130,10 @@ public class ChinookControllers {
 		.list()
 		.stream()
 		.collect(Collectors.groupingBy(x -> employees.stream().collect(Collectors.groupingBy(Employee::EmployeeId)).get(x.SupportRepId()).getFirst()));}
+	@QueryMapping(name = "CustomerById") Customer
+	    customerById (ArgumentValue<Integer> id) {
+	    for (Customer a : jdbcClient.sql("select * from \"Customer\" where \"CustomerId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "Customer") List<Customer>
 	    customer (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -179,6 +191,10 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
+	@QueryMapping(name = "EmployeeById") Employee
+	    employeeById (ArgumentValue<Integer> id) {
+	    for (Employee a : jdbcClient.sql("select * from \"Employee\" where \"EmployeeId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "Employee") List<Employee>
 	    employee (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -205,6 +221,10 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
+	@QueryMapping(name = "GenreById") Genre
+	    genreById (ArgumentValue<Integer> id) {
+	    for (Genre a : jdbcClient.sql("select * from \"Genre\" where \"GenreId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping List<Genre>
 	    Genre (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -247,6 +267,10 @@ public class ChinookControllers {
 		.list()
 		.stream()
 		.collect(Collectors.groupingBy(x -> customers.stream().collect(Collectors.groupingBy(Customer::CustomerId)).get(x.CustomerId()).getFirst()));}
+	@QueryMapping(name = "InvoiceById") Invoice
+	    invoiceById (ArgumentValue<Integer> id) {
+	    for (Invoice a : jdbcClient.sql("select * from \"Invoice\" where \"InvoiceId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "Invoice") List<Invoice>
 	    invoice (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -282,6 +306,10 @@ public class ChinookControllers {
 		.param("ids", tracks.stream().map(x -> x.TrackId()).toList())
 		.query(mapper)
 		.list().stream().collect(Collectors.groupingBy(x -> tracks.stream().collect(Collectors.groupingBy(Track::TrackId)).get(x.TrackId()).getFirst()));}
+	@QueryMapping(name = "InvoiceLineById") InvoiceLine
+	    invoiceLineById (ArgumentValue<Integer> id) {
+	    for (InvoiceLine a : jdbcClient.sql("select * from \"InvoiceLine\" where \"InvoiceLineId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "InvoiceLine") List<InvoiceLine>
 	    invoiceLine (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -308,6 +336,10 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
+	@QueryMapping(name = "MediaTypeById") MediaType
+	    mediaTypeById (ArgumentValue<Integer> id) {
+	    for (MediaType a : jdbcClient.sql("select * from \"MediaType\" where \"MediaTypeId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "MediaType") List<MediaType>
 	    mediaType (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -334,6 +366,10 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
+	@QueryMapping(name = "PlaylistById") Playlist
+	    playlistById (ArgumentValue<Integer> id) {
+	    for (Playlist a : jdbcClient.sql("select * from \"Playlist\" where \"PlaylistId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "Playlist") List<Playlist>
 	    playlist (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -366,6 +402,10 @@ public class ChinookControllers {
 		.param("ids", tracks.stream().map(x -> x.TrackId()).toList())
 		.query(mapper)
 		.list().stream().collect(Collectors.groupingBy(x -> tracks.stream().collect(Collectors.groupingBy(Track::TrackId)).get(x.TrackId()).getFirst()));}
+	@QueryMapping(name = "PlaylistTrackById") PlaylistTrack
+	    playlistTrackById (ArgumentValue<Integer> id) {
+	    for (PlaylistTrack a : jdbcClient.sql("select * from \"PlaylistTrack\" where \"PlaylistTrackId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "PlaylistTrack") List<PlaylistTrack>
 	    playlistTrack (ArgumentValue<Integer> limit) {
 	    StatementSpec
@@ -420,6 +460,10 @@ public class ChinookControllers {
 		.param("ids", mediaTypes.stream().map(x -> x.MediaTypeId()).toList())
 		.query(mapper)
 		.list().stream().collect(Collectors.groupingBy(x -> mediaTypes.stream().collect(Collectors.groupingBy(MediaType::MediaTypeId)).get(x.MediaTypeId()).getFirst()));}
+	@QueryMapping(name = "TrackById") Track
+	    trackById (ArgumentValue<Integer> id) {
+	    for (Track a : jdbcClient.sql("select * from \"Track\" where \"TrackId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    return null;}
 	@QueryMapping(name = "Track") List<Track>
 	    track (ArgumentValue<Integer> limit) {
 	    StatementSpec

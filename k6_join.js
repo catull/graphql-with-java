@@ -29,17 +29,9 @@ export const options = {
 
 const query = `
 query {
-  product(limit: 1) {
-    id
-    name
-    price
-    created_at
-    updated_at
-    order_details {
-      id
-      units
-      created_at
-      updated_at
+  Employee(limit: 10) {
+    Reports {
+      EmployeeId
     }
   }
 }

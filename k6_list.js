@@ -29,12 +29,8 @@ export const options = {
 
 const query = `
 query {
-  product(limit: 10) {
-    id
-    name
-    price
-    created_at
-    updated_at
+  Track(limit: 10) {
+    TrackId
   }
 }
 `;
