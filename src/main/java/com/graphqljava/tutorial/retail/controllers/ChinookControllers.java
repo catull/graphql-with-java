@@ -2,10 +2,11 @@ package com.graphqljava.tutorial.retail.controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.ArgumentValue;
@@ -47,8 +48,8 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@QueryMapping List<Artist>
-	    Artist (ArgumentValue<Integer> limit) {
+	@QueryMapping(name = "Artist") List<Artist>
+	    artist (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"Artist\"") :
@@ -76,18 +77,18 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@SchemaMapping List<Album>
-	    Albums (Artist artist, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"Album\" where \"ArtistId\" = ?").param(artist.ArtistId()) :
-		jdbcClient.sql("select * from \"Album\" where \"ArtistId\" = ? limit ?").param(artist.ArtistId()).param(limit.value());
+	@BatchMapping(field = "Albums") public Map<Artist, List<Album>>
+	    albumsForArtist (List<Artist> artists) {
 	    return
-		spec
+		jdbcClient
+		.sql("select * from \"Album\" where \"ArtistId\" in (:ids)")
+		.param("ids", artists.stream().map(x -> x.ArtistId()).toList())
 		.query(mapper)
-		.list();}
-	@QueryMapping List<Album>
-	    Album (ArgumentValue<Integer> limit) {
+		.list()
+		.stream()
+		.collect(Collectors.groupingBy(x -> artists.stream().collect(Collectors.groupingBy(Artist::ArtistId)).get(x.ArtistId()).getFirst()));}
+	@QueryMapping(name = "Album") List<Album>
+	    album (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"Album\"") :
@@ -117,18 +118,18 @@ public class ChinookControllers {
 				     rs.getString("Email"),
 				     rs.getInt("SupportRepId")
 				     );}};
-	@SchemaMapping List<Customer>
-	    Customers (Employee employee, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"Customer\" where \"SupportRepId\" = ?").param(employee.EmployeeId()) :
-		jdbcClient.sql("select * from \"Customer\" where \"SupportRepId\" = ? limit ?").param(employee.EmployeeId()).param(limit.value());
+	@BatchMapping(field = "Customers") public Map<Employee, List<Customer>>
+	    customersForEmployee (List<Employee> employees) {
 	    return
-		spec
+		jdbcClient
+		.sql("select * from \"Customer\" where \"SupportRepId\" in (:ids)")
+		.param("ids", employees.stream().map(x -> x.EmployeeId()).toList())
 		.query(mapper)
-		.list();}
-	@QueryMapping List<Customer>
-	    Customer (ArgumentValue<Integer> limit) {
+		.list()
+		.stream()
+		.collect(Collectors.groupingBy(x -> employees.stream().collect(Collectors.groupingBy(Employee::EmployeeId)).get(x.SupportRepId()).getFirst()));}
+	@QueryMapping(name = "Customer") List<Customer>
+	    customer (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"Customer\"") :
@@ -186,8 +187,8 @@ public class ChinookControllers {
 		spec
 		.query(mapper)
 		.list();}
-	@QueryMapping List<Employee>
-	    Employee (ArgumentValue<Integer> limit) {
+	@QueryMapping(name = "Employee") List<Employee>
+	    employee (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"Employee\"") :
@@ -249,18 +250,17 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@SchemaMapping List<Invoice>
-	    Invoices (Customer customer, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"Invoice\" where \"CustomerId\" = ?").param(customer.CustomerId()) :
-		jdbcClient.sql("select * from \"Invoice\" where \"CustomerId\" = ? limit ?").param(customer.CustomerId()).param(limit.value());
-	    return
-		spec
+	@BatchMapping(field = "Invoices") public Map<Customer, List<Invoice>>
+	    invoicesForCustomer (List<Customer> customers) {
+	    return jdbcClient
+		.sql("select * from \"Invoice\" where \"CustomerId\" in (:ids)")
+		.param("ids", customers.stream().map(x -> x.CustomerId()).toList())
 		.query(mapper)
-		.list();}
-	@QueryMapping List<Invoice>
-	    Invoice (ArgumentValue<Integer> limit) {
+		.list()
+		.stream()
+		.collect(Collectors.groupingBy(x -> customers.stream().collect(Collectors.groupingBy(Customer::CustomerId)).get(x.CustomerId()).getFirst()));}
+	@QueryMapping(name = "Invoice") List<Invoice>
+	    invoice (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"Invoice\"") :
@@ -282,28 +282,22 @@ public class ChinookControllers {
 					rs.getFloat("UnitPrice"),
 					rs.getInt("Quantity")
 					);}};
-	@SchemaMapping List<InvoiceLine>
-	    InvoiceLines (Invoice invoice, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"InvoiceLine\" where \"InvoiceId\" = ?").param(invoice.InvoiceId()) :
-		jdbcClient.sql("select * from \"InvoiceLine\" where \"InvoiceId\" = ? limit ?").param(invoice.InvoiceId()).param(limit.value());
-	    return
-		spec
+	@BatchMapping(field = "InvoiceLines") public Map<Invoice, List<InvoiceLine>>
+	    invoiceLinesForInvoice (List<Invoice> invoices) {
+	    return jdbcClient
+		.sql("select * from \"InvoiceLine\" where \"InvoiceId\" in (:ids)")
+		.param("ids", invoices.stream().map(x -> x.InvoiceId()).toList())
 		.query(mapper)
-		.list();}
-	@SchemaMapping List<InvoiceLine>
-	    InvoiceLines (Track track, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"InvoiceLine\" where \"TrackId\" = ?").param(track.TrackId()) :
-		jdbcClient.sql("select * from \"InvoiceLine\" where \"TrackId\" = ? limit ?").param(track.TrackId()).param(limit.value());
-	    return
-		spec
+		.list().stream().collect(Collectors.groupingBy(x -> invoices.stream().collect(Collectors.groupingBy(Invoice::InvoiceId)).get(x.InvoiceId()).getFirst()));}
+	@BatchMapping(field = "InvoiceLines") public Map<Track, List<InvoiceLine>>
+	    invoiceLinesForTrack (List<Track> tracks) {
+	    return jdbcClient
+		.sql("select * from \"InvoiceLine\" where \"TrackId\" in (:ids)")
+		.param("ids", tracks.stream().map(x -> x.TrackId()).toList())
 		.query(mapper)
-		.list();}
-	@QueryMapping List<InvoiceLine>
-	    InvoiceLine (ArgumentValue<Integer> limit) {
+		.list().stream().collect(Collectors.groupingBy(x -> tracks.stream().collect(Collectors.groupingBy(Track::TrackId)).get(x.TrackId()).getFirst()));}
+	@QueryMapping(name = "InvoiceLine") List<InvoiceLine>
+	    invoiceLine (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"InvoiceLine\"") :
@@ -330,8 +324,8 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@QueryMapping List<MediaType>
-	    MediaType (ArgumentValue<Integer> limit) {
+	@QueryMapping(name = "MediaType") List<MediaType>
+	    mediaType (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"MediaType\"") :
@@ -358,8 +352,8 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@QueryMapping List<Playlist>
-	    Playlist (ArgumentValue<Integer> limit) {
+	@QueryMapping(name = "Playlist") List<Playlist>
+	    playlist (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"Playlist\"") :
@@ -378,28 +372,22 @@ public class ChinookControllers {
 					  rs.getInt("PlaylistId"),
 					  rs.getInt("TrackId")
 					  );}};
-	@SchemaMapping List<PlaylistTrack>
-	    PlaylistTracks (Playlist playlist, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"PlaylistTrack\" where \"PlaylistId\" = ?").param(playlist.PlaylistId()) :
-		jdbcClient.sql("select * from \"PlaylistTrack\" where \"PlaylistId\" = ? limit ?").param(playlist.PlaylistId()).param(limit.value());
-	    return
-		spec
+	@BatchMapping(field = "PlaylistTracks") public Map<Playlist, List<PlaylistTrack>>
+	    playlistTracksForPlaylist (List<Playlist> playlists) {
+	    return jdbcClient
+		.sql("select * from \"PlaylistTrack\" where \"PlaylistId\" in (:ids)")
+		.param("ids", playlists.stream().map(x -> x.PlaylistId()).toList())
 		.query(mapper)
-		.list();}
-	@SchemaMapping List<PlaylistTrack>
-	    PlaylistTracks (Track track, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"PlaylistTrack\" where \"TrackId\" = ?").param(track.TrackId()) :
-		jdbcClient.sql("select * from \"PlaylistTrack\" where \"TrackId\" = ? limit ?").param(track.TrackId()).param(limit.value());
-	    return
-		spec
+		.list().stream().collect(Collectors.groupingBy(x -> playlists.stream().collect(Collectors.groupingBy(Playlist::PlaylistId)).get(x.PlaylistId()).getFirst()));}
+	@BatchMapping(field = "PlaylistTracks") public Map<Track, List<PlaylistTrack>>
+	    playlistTracksForTrack (List<Track> tracks) {
+	    return jdbcClient
+		.sql("select * from \"PlaylistTrack\" where \"TrackId\" in (:ids)")
+		.param("ids", tracks.stream().map(x -> x.TrackId()).toList())
 		.query(mapper)
-		.list();}
-	@QueryMapping List<PlaylistTrack>
-	    PlaylistTrack (ArgumentValue<Integer> limit) {
+		.list().stream().collect(Collectors.groupingBy(x -> tracks.stream().collect(Collectors.groupingBy(Track::TrackId)).get(x.TrackId()).getFirst()));}
+	@QueryMapping(name = "PlaylistTrack") List<PlaylistTrack>
+	    playlistTrack (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"PlaylistTrack\"") :
@@ -433,51 +421,29 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-
-	public static <K, V> Map<K, V> zipToMap(List<K> keys, List<V> values) {
-	    return IntStream.range(0, keys.size()).boxed()
-		.collect(Collectors.toMap(keys::get, values::get));
-	}
-	// @BatchMapping
-	// public Map<Album, List<Track>> Tracks (List<Album> albums) {
-	//     return jdbcClient
-	// 	.sql("select * from \"Track\" where \"AlbumId\" in (:ids)")
-	// 	.param("ids", albums.stream().map(x -> x.AlbumId()).toList())
-	// 	.query(mapper)
-	// 	.list().stream().collect(Collectors.groupingBy(x -> albums.stream().collect(Collectors.groupingBy(Album::AlbumId)).get(x.AlbumId()).getFirst()));
-	// }
-	@SchemaMapping List<Track>
-	    Tracks (Album album, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ?").param(album.AlbumId()) :
-		jdbcClient.sql("select * from \"Track\" where \"AlbumId\" = ? limit ?").param(album.AlbumId()).param(limit.value());
-	    return
-		spec
+	@BatchMapping(field = "Tracks") public Map<Album, List<Track>>
+	    tracksForAlbum (List<Album> albums) {
+	    return jdbcClient
+		.sql("select * from \"Track\" where \"AlbumId\" in (:ids)")
+		.param("ids", albums.stream().map(x -> x.AlbumId()).toList())
 		.query(mapper)
-		.list();}
-	@SchemaMapping List<Track>
-	    Tracks (Genre genre, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"Track\" where \"GenreId\" = ?").param(genre.GenreId()) :
-		jdbcClient.sql("select * from \"Track\" where \"GenreId\" = ? limit ?").param(genre.GenreId()).param(limit.value());
-	    return
-		spec
+		.list().stream().collect(Collectors.groupingBy(x -> albums.stream().collect(Collectors.groupingBy(Album::AlbumId)).get(x.AlbumId()).getFirst()));}
+	@BatchMapping(field = "Tracks") public Map<Genre, List<Track>>
+	    tracksForGenre (List<Genre> genres) {
+	    return jdbcClient
+		.sql("select * from \"Track\" where \"GenreId\" in (:ids)")
+		.param("ids", genres.stream().map(x -> x.GenreId()).toList())
 		.query(mapper)
-		.list();}
-	@SchemaMapping List<Track>
-	    Tracks (MediaType mediaType, ArgumentValue<Integer> limit) {
-	    StatementSpec
-		spec = limit.isOmitted() ?
-		jdbcClient.sql("select * from \"Track\" where \"MediaTypeId\" = ?").param(mediaType.MediaTypeId()) :
-		jdbcClient.sql("select * from \"Track\" where \"MediaTypeId\" = ? limit ?").param(mediaType.MediaTypeId()).param(limit.value());
-	    return
-		spec
+		.list().stream().collect(Collectors.groupingBy(x -> genres.stream().collect(Collectors.groupingBy(Genre::GenreId)).get(x.GenreId()).getFirst()));}
+	@BatchMapping(field = "Tracks") public Map<MediaType, List<Track>>
+	    tracksForMediaType (List<MediaType> mediaTypes) {
+	    return jdbcClient
+		.sql("select * from \"Track\" where \"MediaTypeId\" in (:ids)")
+		.param("ids", mediaTypes.stream().map(x -> x.MediaTypeId()).toList())
 		.query(mapper)
-		.list();}
-	@QueryMapping List<Track>
-	    Track (ArgumentValue<Integer> limit) {
+		.list().stream().collect(Collectors.groupingBy(x -> mediaTypes.stream().collect(Collectors.groupingBy(MediaType::MediaTypeId)).get(x.MediaTypeId()).getFirst()));}
+	@QueryMapping(name = "Track") List<Track>
+	    track (ArgumentValue<Integer> limit) {
 	    StatementSpec
 		spec = limit.isOmitted() ?
 		jdbcClient.sql("select * from \"Track\"") :

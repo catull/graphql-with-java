@@ -10,7 +10,7 @@
       AlbumId
       ArtistId
       Title
-      Tracks(limit: 1) {
+      Tracks {
         TrackId
         AlbumId
         Bytes
@@ -25,34 +25,6 @@
   }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Album": [
-      {
-        "AlbumId": 1,
-        "ArtistId": 1,
-        "Title": "For Those About To Rock We Salute You",
-        "Tracks": [
-          {
-            "TrackId": 1,
-            "AlbumId": 1,
-            "Bytes": 11170334,
-            "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-            "GenreId": 1,
-            "MediaTypeId": 1,
-            "Milliseconds": 343719,
-            "Name": "For Those About To Rock (We Salute You)",
-            "UnitPrice": 0.99
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
-
 * Artist to List<Album>: Artist has a list of Albums.
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -60,7 +32,7 @@
     Artist(limit: 1) {
       ArtistId
       Name
-      Albums(limit: 1) {
+      Albums {
         AlbumId
         ArtistId
         Title
@@ -68,27 +40,6 @@
     }
   }  
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Artist": [
-      {
-        "ArtistId": 1,
-        "Name": "AC/DC",
-        "Albums": [
-          {
-            "AlbumId": 1,
-            "ArtistId": 1,
-            "Title": "For Those About To Rock We Salute You"
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
 
 * Customer to Employee: Customer has an Employee (i.e. "Customer has this SupportRep Employee")
 
@@ -129,32 +80,6 @@
   }  
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Customer": [
-      {
-        "Address": "Av. Brigadeiro Faria Lima, 2170",
-        "City": "São José dos Campos",
-        "Company": "Embraer - Empresa Brasileira de Aeronáutica S.A.",
-        "Country": "Brazil",
-        "CustomerId": 1,
-        "Email": "luisg@embraer.com.br",
-        "Fax": "+55 (12) 3923-5566",
-        "FirstName": "Luís",
-        "LastName": "Gonçalves",
-        "Phone": "+55 (12) 3923-5555",
-        "PostalCode": "12227-000",
-        "State": "SP",
-        "SupportRepId": 3,
-        "SupportRep": null
-      }
-    ]
-  }
-}
-#+end_example
-
 * Customer to List<Invoice>: Customer has a list of Invoices.
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -173,7 +98,7 @@
       PostalCode
       State
       SupportRepId
-      Invoices(limit: 1) {
+      Invoices {
         BillingAddress
         BillingCity
         BillingCountry
@@ -187,44 +112,6 @@
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Customer": [
-      {
-        "Address": "Av. Brigadeiro Faria Lima, 2170",
-        "City": "São José dos Campos",
-        "Company": "Embraer - Empresa Brasileira de Aeronáutica S.A.",
-        "Country": "Brazil",
-        "CustomerId": 1,
-        "Email": "luisg@embraer.com.br",
-        "Fax": "+55 (12) 3923-5566",
-        "FirstName": "Luís",
-        "LastName": "Gonçalves",
-        "Phone": "+55 (12) 3923-5555",
-        "PostalCode": "12227-000",
-        "State": "SP",
-        "SupportRepId": 3,
-        "Invoices": [
-          {
-            "BillingAddress": "Av. Brigadeiro Faria Lima, 2170",
-            "BillingCity": "São José dos Campos",
-            "BillingCountry": "Brazil",
-            "BillingPostalCode": "12227-000",
-            "BillingState": "SP",
-            "CustomerId": 1,
-            "InvoiceDate": "2010-03-11 00:00:00",
-            "InvoiceId": 98,
-            "Total": 3.98
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
 
 * Employee to Employee: Employee may have a single Employee (i.e., "Employee who is his or her manager")
 
@@ -265,33 +152,6 @@
   }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Employee": [
-      {
-        "Address": "11120 Jasper Ave NW",
-        "BirthDate": "1962-02-18 00:00:00",
-        "City": "Edmonton",
-        "Country": "Canada",
-        "Email": "andrew@chinookcorp.com",
-        "EmployeeId": 1,
-        "Fax": "+1 (780) 428-3457",
-        "FirstName": "Andrew",
-        "HireDate": "2002-08-14 00:00:00",
-        "LastName": "Adams",
-        "Phone": "+1 (780) 428-9482",
-        "PostalCode": "T5K 2N1",
-        "ReportsTo": 0,
-        "State": "AB",
-        "Manager": null
-      }
-    ]
-  }
-}
-#+end_example
-
 * Employee to List<Customer>: Employee has a list of Customers.
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -311,7 +171,7 @@
       PostalCode
       ReportsTo
       State
-      Customers(limit: 1) {
+      Customers {
         Address
         City
         Company
@@ -329,33 +189,6 @@
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Employee": [
-      {
-        "Address": "11120 Jasper Ave NW",
-        "BirthDate": "1962-02-18 00:00:00",
-        "City": "Edmonton",
-        "Country": "Canada",
-        "Email": "andrew@chinookcorp.com",
-        "EmployeeId": 1,
-        "Fax": "+1 (780) 428-3457",
-        "FirstName": "Andrew",
-        "HireDate": "2002-08-14 00:00:00",
-        "LastName": "Adams",
-        "Phone": "+1 (780) 428-9482",
-        "PostalCode": "T5K 2N1",
-        "ReportsTo": 0,
-        "State": "AB",
-        "Customers": []
-      }
-    ]
-  }
-}
-#+end_example
 
 * Employee to List<Employee>: Employee has a list of Employees (i.e., "Employees he or she manages")
 
@@ -396,33 +229,6 @@ query {
 }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Employee": [
-      {
-        "Address": "11120 Jasper Ave NW",
-        "BirthDate": "1962-02-18 00:00:00",
-        "City": "Edmonton",
-        "Country": "Canada",
-        "Email": "andrew@chinookcorp.com",
-        "EmployeeId": 1,
-        "Fax": "+1 (780) 428-3457",
-        "FirstName": "Andrew",
-        "HireDate": "2002-08-14 00:00:00",
-        "LastName": "Adams",
-        "Phone": "+1 (780) 428-9482",
-        "PostalCode": "T5K 2N1",
-        "ReportsTo": 0,
-        "State": "AB",
-        "Reports": []
-      }
-    ]
-  }
-}
-#+end_example
-
 * Genre to List<Track>: Genre has a list of Tracks (i.e. "Tracks belonging to this Genre")
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -430,7 +236,7 @@ query {
     Genre(limit: 1) {
       GenreId
       Name
-      Tracks(limit: 1) {
+      Tracks {
         AlbumId
         Bytes
         Composer
@@ -444,33 +250,6 @@ query {
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Genre": [
-      {
-        "GenreId": 1,
-        "Name": "Rock",
-        "Tracks": [
-          {
-            "AlbumId": 1,
-            "Bytes": 11170334,
-            "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-            "GenreId": 1,
-            "MediaTypeId": 1,
-            "Name": "For Those About To Rock (We Salute You)",
-            "Milliseconds": 343719,
-            "TrackId": 1,
-            "UnitPrice": 0.99
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
 
 * Invoice to Customer: Invoice has a Customer (i.e. "Invoice representing a purchase by a Customer")
 
@@ -504,28 +283,6 @@ query {
   }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Invoice": [
-      {
-        "BillingAddress": "Theodor-Heuss-Straße 34",
-        "BillingCity": "Stuttgart",
-        "BillingCountry": "Germany",
-        "BillingPostalCode": "70174",
-        "BillingState": null,
-        "CustomerId": 2,
-        "InvoiceDate": "2009-01-01 00:00:00",
-        "InvoiceId": 1,
-        "Total": 1.98,
-        "Customer": null
-      }
-    ]
-  }
-}
-#+end_example
-
 * Invoice to List<InvoiceLine>: Invoice has a list of InvoiceLines.
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -540,7 +297,7 @@ query {
       InvoiceDate
       InvoiceId
       Total
-      InvoiceLines(limit: 1) {
+      InvoiceLines {
         InvoiceId
         InvoiceLineId
         Quantity
@@ -550,36 +307,6 @@ query {
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Invoice": [
-      {
-        "BillingAddress": "Theodor-Heuss-Straße 34",
-        "BillingCity": "Stuttgart",
-        "BillingCountry": "Germany",
-        "BillingPostalCode": "70174",
-        "BillingState": null,
-        "CustomerId": 2,
-        "InvoiceDate": "2009-01-01 00:00:00",
-        "InvoiceId": 1,
-        "Total": 1.98,
-        "InvoiceLines": [
-          {
-            "InvoiceId": 1,
-            "InvoiceLineId": 1,
-            "Quantity": 1,
-            "TrackId": 2,
-            "UnitPrice": 0.99
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
 
 * InvoiceLine to Invoice: InvoiceLine has an Invoice (i.e. "InvoiceLine belongs to an Invoice")
 
@@ -606,34 +333,6 @@ query {
   }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "InvoiceLine": [
-      {
-        "InvoiceId": 1,
-        "InvoiceLineId": 1,
-        "Quantity": 1,
-        "TrackId": 2,
-        "UnitPrice": 0.99,
-        "Invoice": {
-          "BillingAddress": "Theodor-Heuss-Straße 34",
-          "BillingCity": "Stuttgart",
-          "BillingCountry": "Germany",
-          "BillingPostalCode": "70174",
-          "BillingState": null,
-          "CustomerId": 2,
-          "InvoiceDate": "2009-01-01 00:00:00",
-          "InvoiceId": 1,
-          "Total": 1.98
-        }
-      }
-    ]
-  }
-}
-#+end_example
-
 * InvoiceLine to Track: InvoiceLine has a Track (i.e. "InvoiceLine purchaes a particular Track")
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -659,34 +358,6 @@ query {
   }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "InvoiceLine": [
-      {
-        "InvoiceId": 1,
-        "InvoiceLineId": 1,
-        "Quantity": 1,
-        "TrackId": 2,
-        "UnitPrice": 0.99,
-        "Track": {
-          "AlbumId": 2,
-          "Bytes": 5510424,
-          "Composer": null,
-          "GenreId": 1,
-          "MediaTypeId": 2,
-          "Milliseconds": 342562,
-          "Name": "Balls to the Wall",
-          "TrackId": 2,
-          "UnitPrice": 0.99
-        }
-      }
-    ]
-  }
-}
-#+end_example
-
 * MediaType to List<Track>: MediaType has a list of Tracks (i.e. "Tracks that use this MediaType")
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -694,7 +365,7 @@ query {
     MediaType(limit: 1) {
       MediaTypeId
       Name
-      Tracks(limit: 1) {
+      Tracks {
         AlbumId
         Bytes
         Composer
@@ -709,65 +380,19 @@ query {
   }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "MediaType": [
-      {
-        "MediaTypeId": 1,
-        "Name": "MPEG audio file",
-        "Tracks": [
-          {
-            "AlbumId": 1,
-            "Bytes": 11170334,
-            "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-            "GenreId": 1,
-            "MediaTypeId": 1,
-            "Milliseconds": 343719,
-            "Name": "For Those About To Rock (We Salute You)",
-            "TrackId": 1,
-            "UnitPrice": 0.99
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
-
 * Playlist to List<PlaylistTrack>: Playlist has a list of PlaylistTrack (i.e. "Playlist comprises these PlaylistTracks")
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
      Playlist(limit: 1) {
        PlaylistId
-       PlaylistTracks(limit: 1) {
+       PlaylistTracks {
          PlaylistId
          TrackId
        }
      }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Playlist": [
-      {
-        "PlaylistId": 1,
-        "PlaylistTracks": [
-          {
-            "PlaylistId": 1,
-            "TrackId": 3402
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
 
 * PlaylistTrack to Playlist: PlaylistTrack has a Playlist (i.e. "Playlist this PlaylistTrack belongs to")
 
@@ -783,24 +408,6 @@ query {
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "PlaylistTrack": [
-      {
-        "PlaylistId": 1,
-        "TrackId": 3402,
-        "Playlist": {
-          "PlaylistId": 1,
-          "Name": "Music"
-        }
-      }
-    ]
-  }
-}
-#+end_example
 
 * PlaylistTrack to Track: PlaylistTrack has a Track (i.e. "Track this PlaylistTrack corresponds to")
 
@@ -823,21 +430,6 @@ query {
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "PlaylistTrack": [
-      {
-        "PlaylistId": 1,
-        "TrackId": 3402,
-        "Track": null
-      }
-    ]
-  }
-}
-#+end_example
 
 * Track to Album: Track belongs to an Album.
 
@@ -862,32 +454,6 @@ query {
   }
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Track": [
-      {
-        "AlbumId": 1,
-        "Bytes": 11170334,
-        "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-        "GenreId": 1,
-        "MediaTypeId": 1,
-        "Milliseconds": 343719,
-        "Name": "For Those About To Rock (We Salute You)",
-        "TrackId": 1,
-        "UnitPrice": 0.99,
-        "Album": {
-          "AlbumId": 1,
-          "ArtistId": 1,
-          "Title": "For Those About To Rock We Salute You"
-        }
-      }
-    ]
-  }
-}
-#+end_example
-
 * Track to Genre: Track is in a Genre.
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -910,31 +476,6 @@ query {
   }  
 #+end_src
 
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Track": [
-      {
-        "AlbumId": 1,
-        "Bytes": 11170334,
-        "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-        "GenreId": 1,
-        "MediaTypeId": 1,
-        "Milliseconds": 343719,
-        "Name": "For Those About To Rock (We Salute You)",
-        "TrackId": 1,
-        "UnitPrice": 0.99,
-        "Genre": {
-          "GenreId": 1,
-          "Name": "Rock"
-        }
-      }
-    ]
-  }
-}
-#+end_example
-
 * Track to List<InvoiceLine>: Track has a list of InvoiceLines (i.e. "InvoiceLines for purchases of this Track")
 
 #+begin_src graphql :url http://localhost:8082/graphql
@@ -949,7 +490,7 @@ query {
       Name
       TrackId
       UnitPrice
-      InvoiceLines(limit: 1) {
+      InvoiceLines {
         InvoiceId
         Quantity
         InvoiceLineId
@@ -959,36 +500,6 @@ query {
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Track": [
-      {
-        "AlbumId": 1,
-        "Bytes": 11170334,
-        "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-        "GenreId": 1,
-        "MediaTypeId": 1,
-        "Milliseconds": 343719,
-        "Name": "For Those About To Rock (We Salute You)",
-        "TrackId": 1,
-        "UnitPrice": 0.99,
-        "InvoiceLines": [
-          {
-            "InvoiceId": 108,
-            "Quantity": 1,
-            "InvoiceLineId": 579,
-            "TrackId": 1,
-            "UnitPrice": 0.99
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
 
 * Track to List<PlaylistTrack>: Track has a list of PlaylistTrack (i.e. "PlaylistTracks that correspond to this Track")
 
@@ -1004,40 +515,13 @@ query {
       Name
       TrackId
       UnitPrice
-      PlaylistTracks(limit: 1) {
+      PlaylistTracks {
         PlaylistId
         TrackId
       }
     }
   }
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Track": [
-      {
-        "AlbumId": 1,
-        "Bytes": 11170334,
-        "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-        "GenreId": 1,
-        "MediaTypeId": 1,
-        "Milliseconds": 343719,
-        "Name": "For Those About To Rock (We Salute You)",
-        "TrackId": 1,
-        "UnitPrice": 0.99,
-        "PlaylistTracks": [
-          {
-            "PlaylistId": 1,
-            "TrackId": 1
-          }
-        ]
-      }
-    ]
-  }
-}
-#+end_example
 
 * Track to MediaType: Track uses a MediaType.
 
@@ -1060,28 +544,3 @@ query {
     }
   }  
 #+end_src
-
-#+RESULTS:
-#+begin_example
-{
-  "data": {
-    "Track": [
-      {
-        "AlbumId": 1,
-        "Bytes": 11170334,
-        "Composer": "Angus Young, Malcolm Young, Brian Johnson",
-        "GenreId": 1,
-        "MediaTypeId": 1,
-        "Milliseconds": 343719,
-        "Name": "For Those About To Rock (We Salute You)",
-        "TrackId": 1,
-        "UnitPrice": 0.99,
-        "MediaType": {
-          "Name": "MPEG audio file",
-          "MediaTypeId": 1
-        }
-      }
-    ]
-  }
-}
-#+end_example
