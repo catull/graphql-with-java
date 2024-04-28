@@ -2,10 +2,8 @@ package com.graphqljava.tutorial.retail.controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +62,9 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public Album mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new Album(
-				  rs.getInt("AlbumId"),
+			new Album(rs.getInt("AlbumId"),
 				  rs.getString("Title"),
-				  rs.getInt("ArtistId")
-				  );}};
+				  rs.getInt("ArtistId"));}};
 	@SchemaMapping Album Album (Track track) {
 	    return
 		jdbcClient
@@ -103,8 +99,7 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public Customer mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new Customer(
-				     rs.getInt("CustomerId"),
+			new Customer(rs.getInt("CustomerId"),
 				     rs.getString("FirstName"),
 				     rs.getString("LastName"),
 				     rs.getString("Company"),
@@ -116,8 +111,7 @@ public class ChinookControllers {
 				     rs.getString("Phone"),
 				     rs.getString("Fax"),
 				     rs.getString("Email"),
-				     rs.getInt("SupportRepId")
-				     );}};
+				     rs.getInt("SupportRepId"));}};
 	@BatchMapping(field = "Customers") public Map<Employee, List<Customer>>
 	    customersForEmployee (List<Employee> employees) {
 	    return
@@ -144,8 +138,7 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public Employee mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new Employee(
-				     rs.getInt("EmployeeId"),
+			new Employee(rs.getInt("EmployeeId"),
 				     rs.getString("LastName"),
 				     rs.getString("FirstName"),
 				     rs.getString("Title"),
@@ -159,8 +152,7 @@ public class ChinookControllers {
 				     rs.getString("PostalCode"),
 				     rs.getString("Phone"),
 				     rs.getString("Fax"),
-				     rs.getString("Email")
-				     );}};
+				     rs.getString("Email"));}};
 	@SchemaMapping Employee Employee (Customer customer) {
 	    return
 		jdbcClient
@@ -203,10 +195,8 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public Genre mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new Genre(
-				  rs.getInt("GenreId"),
-				  rs.getString("Name")
-				  );}};
+			new Genre(rs.getInt("GenreId"),
+				  rs.getString("Name"));}};
 	@SchemaMapping Genre Genre (Track track) {
 	    return
 		jdbcClient
@@ -231,8 +221,7 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public Invoice mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new Invoice(
-				    rs.getInt("InvoiceId"),
+			new Invoice(rs.getInt("InvoiceId"),
 				    rs.getInt("CustomerId"),
 				    rs.getString("InvoiceDate"),
 				    rs.getString("BillingAddress"),
@@ -240,8 +229,7 @@ public class ChinookControllers {
 				    rs.getString("BillingState"),
 				    rs.getString("BillingCountry"),
 				    rs.getString("BillingPostalCode"),
-				    rs.getFloat("Total")
-				    );}};
+				    rs.getFloat("Total"));}};
 	@SchemaMapping Invoice Invoice (InvoiceLine invoiceLine) {
 	    return
 		jdbcClient
@@ -275,13 +263,11 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public InvoiceLine mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new InvoiceLine(
-					rs.getInt("InvoiceLineId"),
+			new InvoiceLine(rs.getInt("InvoiceLineId"),
 					rs.getInt("InvoiceId"),
 					rs.getInt("TrackId"),
 					rs.getFloat("UnitPrice"),
-					rs.getInt("Quantity")
-					);}};
+					rs.getInt("Quantity"));}};
 	@BatchMapping(field = "InvoiceLines") public Map<Invoice, List<InvoiceLine>>
 	    invoiceLinesForInvoice (List<Invoice> invoices) {
 	    return jdbcClient
@@ -312,10 +298,8 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public MediaType mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new MediaType(
-				      rs.getInt("MediaTypeId"),
-				      rs.getString("Name")
-				      );}};
+			new MediaType(rs.getInt("MediaTypeId"),
+				      rs.getString("Name"));}};
 	@SchemaMapping MediaType MediaType (Track track) {
 	    return
 		jdbcClient
@@ -340,10 +324,8 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public Playlist mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new Playlist(
-				     rs.getInt("PlaylistId"),
-				     rs.getString("Name")
-				     );}};
+			new Playlist(rs.getInt("PlaylistId"),
+				     rs.getString("Name"));}};
 	@SchemaMapping Playlist Playlist (PlaylistTrack playlistTrack) {
 	    return
 		jdbcClient
@@ -368,10 +350,8 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public PlaylistTrack mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new PlaylistTrack(
-					  rs.getInt("PlaylistId"),
-					  rs.getInt("TrackId")
-					  );}};
+			new PlaylistTrack(rs.getInt("PlaylistId"),
+					  rs.getInt("TrackId"));}};
 	@BatchMapping(field = "PlaylistTracks") public Map<Playlist, List<PlaylistTrack>>
 	    playlistTracksForPlaylist (List<Playlist> playlists) {
 	    return jdbcClient
@@ -402,8 +382,7 @@ public class ChinookControllers {
 	    mapper = new RowMapper<>() {
 		    public Track mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
-			new Track(
-				  rs.getInt("TrackId"),
+			new Track(rs.getInt("TrackId"),
 				  rs.getString("Name"),
 				  rs.getInt("AlbumId"),
 				  rs.getInt("MediaTypeId"),
@@ -411,8 +390,7 @@ public class ChinookControllers {
 				  rs.getString("Composer"),
 				  rs.getInt("Milliseconds"),
 				  rs.getInt("Bytes"),
-				  rs.getFloat("UnitPrice")
-				  );}};
+				  rs.getFloat("UnitPrice"));}};
 	@SchemaMapping Track Track (InvoiceLine invoiceLine) {
 	    return
 		jdbcClient
@@ -451,5 +429,4 @@ public class ChinookControllers {
 	    return
 		spec
 		.query(mapper)
-		.list();}}
-}
+		.list();}}}
