@@ -404,7 +404,7 @@ public class ChinookControllers {
 		.list().stream().collect(Collectors.groupingBy(x -> tracks.stream().collect(Collectors.groupingBy(Track::TrackId)).get(x.TrackId()).getFirst()));}
 	@QueryMapping(name = "PlaylistTrackById") PlaylistTrack
 	    playlistTrackById (ArgumentValue<Integer> id) {
-	    for (PlaylistTrack a : jdbcClient.sql("select * from \"PlaylistTrack\" where \"PlaylistTrackId\" = ?").param(id.value()).query(mapper).list()) return a;
+	    for (PlaylistTrack a : jdbcClient.sql("select * from \"PlaylistTrack\" where \"PlaylistId\" = ?").param(id.value()).query(mapper).list()) return a;
 	    return null;}
 	@QueryMapping(name = "PlaylistTrack") List<PlaylistTrack>
 	    playlistTrack (ArgumentValue<Integer> limit) {
