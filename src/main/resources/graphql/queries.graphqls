@@ -11,6 +11,8 @@ type Query {
 
     products(input: ProductInput): [product]
 
+    regions(input: RegionInput): [region]
+
     # Chinook
 
     Albums(input: AlbumInput): [Album]
