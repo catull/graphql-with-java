@@ -33,3 +33,7 @@ build/
 .vscode/
 setenv.sh
 .mvn/wrapper/
+em.yaml
+evo/EvoMaster_successes_Test.java
+em.*
+evo/*
