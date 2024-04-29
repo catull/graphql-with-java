@@ -60,7 +60,7 @@ public class CustomerController {
             input.setCustomerId(invoice.CustomerId());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     @SchemaMapping

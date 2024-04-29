@@ -48,7 +48,7 @@ public class MediaTypeController {
             input.setMediaTypeId(track.MediaTypeId());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     private StatementSpec spec(final MediaTypeInput input) {

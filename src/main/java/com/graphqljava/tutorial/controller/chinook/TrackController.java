@@ -83,7 +83,7 @@ public class TrackController {
             input.setTrackId(invoiceLine.TrackId());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     @SchemaMapping
@@ -107,7 +107,7 @@ public class TrackController {
             input.setTrackId(playlistTrack.TrackId());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     private StatementSpec spec(final TrackInput input) {

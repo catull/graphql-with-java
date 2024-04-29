@@ -35,12 +35,12 @@ public class AccountController {
     public account account(final order order, final @Argument AccountInput input) {
         UUID accountId = null != input && null != input.getId() ? input.getId() : order.account_id();
 
-        return
-                this.jdbcClient
-                        .sql("select * from \"account\" where id = ?")
-                        .param(accountId)
-                        .query(this.rowMapper)
-                        .single();
+        return this.jdbcClient
+            .sql("select * from \"account\" where id = ?")
+            .param(accountId)
+            .query(this.rowMapper)
+            .optional()
+            .orElse(null);
     }
 
     @QueryMapping

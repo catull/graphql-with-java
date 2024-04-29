@@ -60,7 +60,7 @@ public class AlbumController {
             input.setAlbumId(track.AlbumId());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     private StatementSpec spec(final AlbumInput input) {

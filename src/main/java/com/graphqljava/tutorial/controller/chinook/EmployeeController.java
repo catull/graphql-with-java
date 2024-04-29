@@ -58,13 +58,12 @@ public class EmployeeController {
             input = new EmployeeInput();
         }
         if (null == input.getEmployeeId()) {
-            input.setEmployeeId(customer.CustomerId());
+            input.setEmployeeId(customer.SupportRepId());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
-    //Manager(input: EmployeeInput): Employee
     @SchemaMapping
     public Employee Manager(final Employee employee, @Argument EmployeeInput input) {
         if (null == input) {
@@ -74,7 +73,7 @@ public class EmployeeController {
             input.setEmployeeId(employee.ReportsTo());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     @SchemaMapping
@@ -86,7 +85,7 @@ public class EmployeeController {
             input.setReportsTo(employee.ReportsTo());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     private StatementSpec spec(final EmployeeInput input) {

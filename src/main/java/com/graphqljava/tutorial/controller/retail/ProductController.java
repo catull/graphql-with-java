@@ -35,12 +35,12 @@ public class ProductController {
     @SchemaMapping
     public product product(final order_detail order_detail, final @Argument ProductInput input) {
         UUID id = null != input && null != input.getId() ? input.getId() : order_detail.product_id();
-        return
-                this.jdbcClient
-                        .sql("select * from \"product\" where id = ?")
-                        .param(id)
-                        .query(this.rowMapper)
-                        .single();
+        return this.jdbcClient
+            .sql("select * from \"product\" where id = ?")
+            .param(id)
+            .query(this.rowMapper)
+            .optional()
+            .orElse(null);
     }
 
     @QueryMapping

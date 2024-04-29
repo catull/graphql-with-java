@@ -48,7 +48,7 @@ public class PlaylistController {
             input.setPlaylistId(playlistTrack.PlaylistId());
         }
 
-        return spec(input).query(rowMapper).single();
+        return spec(input).query(rowMapper).optional().orElse(null);
     }
 
     private StatementSpec spec(final PlaylistInput input) {

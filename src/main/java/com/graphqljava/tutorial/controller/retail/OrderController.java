@@ -36,12 +36,13 @@ public class OrderController {
     @SchemaMapping
     public order order(final order_detail order_detail, final @Argument OrderInput input) {
         UUID orderId = null != input && null != input.getId() ? input.getId() : order_detail.order_id();
-        return
-                this.jdbcClient
-                        .sql("select * from \"order\" where id = ? limit 1")
-                        .param(orderId)
-                        .query(this.rowMapper)
-                        .single();
+
+        return this.jdbcClient
+            .sql("select * from \"order\" where id = ? limit 1")
+            .param(orderId)
+            .query(this.rowMapper)
+            .optional()
+            .orElse(null);
     }
 
     @SchemaMapping

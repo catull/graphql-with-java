@@ -1085,3 +1085,71 @@ query {
   }
 }
 #+end_example
+
+* Track to Album to Track again: Track uses an Album with Tracks, but only if a Track's name has a certain value.
+
+#+begin_src graphql :url http://localhost:8082/graphql
+{
+  Tracks (
+    input: {
+      limit: 3
+    })
+  {
+    TrackId
+    Name
+    Album (
+      input: {
+        limit: 3
+      })
+    {
+      AlbumId
+      Tracks (
+        input: {
+          limit: 3,
+          Name: "Balls to the Wall"
+        })
+      {
+        Name
+      }
+    }
+  }
+}
+#+end_src
+
+#+RESULTS:
+#+begin_example
+{
+  "data": {
+    "Tracks": [
+      {
+        "TrackId": "1",
+        "Name": "For Those About To Rock (We Salute You)",
+        "Album": {
+          "AlbumId": "1",
+          "Tracks": []
+        }
+      },
+      {
+        "TrackId": "2",
+        "Name": "Balls to the Wall",
+        "Album": {
+          "AlbumId": "2",
+          "Tracks": [
+            {
+              "Name": "Balls to the Wall"
+            }
+          ]
+        }
+      },
+      {
+        "TrackId": "3",
+        "Name": "Fast As a Shark",
+        "Album": {
+          "AlbumId": "3",
+          "Tracks": []
+        }
+      }
+    ]
+  }
+}
+#+end_example
