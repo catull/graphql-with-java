@@ -20,15 +20,6 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ProductController extends BaseController {
 
-    private static final RowMapper<product>
-        rowMapper = (rs, rowNum) -> new product (
-            UUID.fromString(rs.getString("id")),
-            rs.getString("name"),
-            rs.getInt("price"),
-            rs.getString("created_at"),
-            rs.getString("updated_at")
-    );
-
     public ProductController(final JdbcClient jdbcClient) {
         super (jdbcClient);
     }
@@ -58,6 +49,15 @@ public class ProductController extends BaseController {
 
         return spec(input).query(rowMapper).optional().orElse(null);
     }
+
+    private static final RowMapper<product>
+        rowMapper = (rs, rowNum) -> new product (
+            UUID.fromString(rs.getString("id")),
+            rs.getString("name"),
+            rs.getInt("price"),
+            rs.getString("created_at"),
+            rs.getString("updated_at")
+        );
 
     private StatementSpec spec(final ProductInput input) {
         List<String> columns = new ArrayList<>();

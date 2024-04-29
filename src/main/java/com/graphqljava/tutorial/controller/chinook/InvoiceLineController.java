@@ -2,8 +2,8 @@ package com.graphqljava.tutorial.controller.chinook;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import com.graphqljava.tutorial.controller.BaseController;
 import com.graphqljava.tutorial.model.chinook.Invoice;
 import com.graphqljava.tutorial.model.chinook.InvoiceLine;
 import com.graphqljava.tutorial.model.chinook.Track;
@@ -18,20 +18,15 @@ import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
 
 @Controller
-    public class InvoiceLineController {
-        private final JdbcClient jdbcClient;
-
-    private static final RowMapper<InvoiceLine>
-            rowMapper = (rs, rowNum) -> new InvoiceLine(
-            rs.getInt("InvoiceLineId"),
-            rs.getInt("InvoiceId"),
-            rs.getInt("TrackId"),
-            rs.getFloat("UnitPrice"),
-            rs.getInt("Quantity")
-    );
+    public class InvoiceLineController extends BaseController {
 
     public InvoiceLineController(final JdbcClient jdbcClient) {
-        this.jdbcClient = jdbcClient;
+        super (jdbcClient);
+    }
+
+    @Override
+    public String getTablePrefix() {
+        return "\"InvoiceLine\"";
     }
 
     @QueryMapping
@@ -67,64 +62,25 @@ import org.springframework.stereotype.Controller;
         return spec(input).query(rowMapper).list();
     }
 
+    private static final RowMapper<InvoiceLine>
+        rowMapper = (rs, rowNum) -> new InvoiceLine (
+            rs.getInt("InvoiceLineId"),
+            rs.getInt("InvoiceId"),
+            rs.getInt("TrackId"),
+            rs.getFloat("UnitPrice"),
+            rs.getInt("Quantity")
+        );
+
     private StatementSpec spec(final InvoiceLineInput input) {
         List<String> columns = new ArrayList<>();
         List<Object> params = new ArrayList<>();
-        String select = "select * from \"InvoiceLine\"";
 
-        Integer invoiceLineId = input.getInvoiceLineId();
-        if (null != invoiceLineId) {
-            columns.add("InvoiceLineId");
-            params.add(invoiceLineId);
-        }
+        extractInputParameterAndValue(columns, params, "InvoiceLineId", input.getInvoiceLineId());
+        extractInputParameterAndValue(columns, params, "InvoiceId", input.getInvoiceId());
+        extractInputParameterAndValue(columns, params, "TrackId", input.getTrackId());
+        extractInputParameterAndValue(columns, params, "UnitPrice", input.getUnitPrice());
+        extractInputParameterAndValue(columns, params, "Quantity", input.getQuantity());
 
-        Integer invoiceId = input.getInvoiceId();
-        if (null != invoiceId) {
-            columns.add("InvoiceId");
-            params.add(invoiceId);
-        }
-
-        Integer trackId = input.getTrackId();
-        if (null != trackId) {
-            columns.add("TrackId");
-            params.add(trackId);
-        }
-
-        Float unitPrice = input.getUnitPrice();
-        if (null != unitPrice) {
-            columns.add("UnitPrice");
-            params.add(unitPrice);
-        }
-
-        Integer Quantity = input.getQuantity();
-        if (null != Quantity) {
-            columns.add("Quantity");
-            params.add(Quantity);
-        }
-
-        int limit = input.getLimit();
-        boolean withLimit = limit > 0;
-        if (!withLimit && params.isEmpty()) {
-            return this.jdbcClient.sql(select);
-        }
-
-        if (withLimit) {
-            params.add(limit);
-        }
-
-        if (withLimit && 1 == params.size()) {
-            select += " limit ?";
-            return this.jdbcClient.sql(select).param(limit);
-        }
-
-        select += " where " + columns.stream()
-                .map(w -> "\"InvoiceLine\".\"" + w + "\" = ?")
-                .collect(Collectors.joining(" and "));
-
-        if (withLimit) {
-            select += " limit ?";
-        }
-
-        return this.jdbcClient.sql(select).params(params);
+        return createJdbcSpec(columns, params, input.getLimit());
     }
 }

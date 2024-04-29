@@ -21,16 +21,6 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class OrderController extends BaseController {
 
-    private static final RowMapper<order>
-        rowMapper = (rs, rowNum) -> new order(
-            UUID.fromString(rs.getString("id")),
-            UUID.fromString(rs.getString("account_id")),
-            rs.getString("status"),
-            rs.getString("region"),
-            rs.getString("created_at"),
-            rs.getString("updated_at")
-        );
-
     public OrderController(final JdbcClient jdbcClient) {
         super(jdbcClient);
     }
@@ -73,6 +63,16 @@ public class OrderController extends BaseController {
         return spec(input).query(rowMapper).list();
     }
 
+    private static final RowMapper<order>
+        rowMapper = (rs, rowNum) -> new order(
+            UUID.fromString(rs.getString("id")),
+            UUID.fromString(rs.getString("account_id")),
+            rs.getString("status"),
+            rs.getString("region"),
+            rs.getString("created_at"),
+            rs.getString("updated_at")
+        );
+
     private StatementSpec spec(final OrderInput input) {
         List<String> columns = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -80,6 +80,7 @@ public class OrderController extends BaseController {
         extractInputParameterAndValue(columns, params, "id", input.getId());
         extractInputParameterAndValue(columns, params, "account_id", input.getAccount_id());
 
+        // TODO: Still gives a runtime exception about invalid SQL Grammar!!
         String status = input.getStatus();
         if (null != status) {
             String statusValue = "any (enum_range('" + status + "'::public.status, '" + status + "'::public.status))";

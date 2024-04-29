@@ -16,12 +16,6 @@ import java.util.List;
 @Controller
 public class RegionController extends BaseController {
 
-    private static final RowMapper<region>
-        rowMapper = (rs, rowNum) -> new region (
-            rs.getString("value"),
-            rs.getString("description")
-    );
-
     public RegionController(final JdbcClient jdbcClient) {
         super (jdbcClient);
     }
@@ -39,6 +33,12 @@ public class RegionController extends BaseController {
 
         return spec(input).query(rowMapper).list();
     }
+
+    private static final RowMapper<region>
+        rowMapper = (rs, rowNum) -> new region (
+            rs.getString("value"),
+            rs.getString("description")
+        );
 
     private StatementSpec spec(final RegionInput input) {
         List<String> columns = new ArrayList<>();

@@ -2,8 +2,8 @@ package com.graphqljava.tutorial.controller.chinook;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import com.graphqljava.tutorial.controller.BaseController;
 import com.graphqljava.tutorial.model.chinook.PlaylistTrack;
 import com.graphqljava.tutorial.model.chinook.Track;
 import com.graphqljava.tutorial.model.chinook.Playlist;
@@ -18,17 +18,15 @@ import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class PlaylistTrackController {
-    private final JdbcClient jdbcClient;
-
-    private static final RowMapper<PlaylistTrack>
-            rowMapper = (rs, rowNum) -> new PlaylistTrack(
-            rs.getInt("PlaylistId"),
-            rs.getInt("TrackId")
-    );
+public class PlaylistTrackController extends BaseController {
 
     public PlaylistTrackController(final JdbcClient jdbcClient) {
-        this.jdbcClient = jdbcClient;
+        super (jdbcClient);
+    }
+
+    @Override
+    public String getTablePrefix() {
+        return "\"PlaylistTrack\"";
     }
 
     @QueryMapping
@@ -64,46 +62,19 @@ public class PlaylistTrackController {
         return spec(input).query(rowMapper).list();
     }
 
+    private static final RowMapper<PlaylistTrack>
+        rowMapper = (rs, rowNum) -> new PlaylistTrack (
+            rs.getInt("PlaylistId"),
+            rs.getInt("TrackId")
+        );
+
     private StatementSpec spec(final PlaylistTrackInput input) {
         List<String> columns = new ArrayList<>();
         List<Object> params = new ArrayList<>();
-        String select = "select * from \"PlaylistTrack\"";
 
-        Integer PlaylistId = input.getPlaylistId();
-        if (null != PlaylistId) {
-            columns.add("PlaylistId");
-            params.add(PlaylistId);
-        }
+        extractInputParameterAndValue(columns, params, "PlaylistId", input.getPlaylistId());
+        extractInputParameterAndValue(columns, params, "TrackId", input.getTrackId());
 
-        Integer trackId = input.getTrackId();
-        if (null != trackId) {
-            columns.add("TrackId");
-            params.add(trackId);
-        }
-
-        int limit = input.getLimit();
-        boolean withLimit = limit > 0;
-        if (!withLimit && params.isEmpty()) {
-            return this.jdbcClient.sql(select);
-        }
-
-        if (withLimit) {
-            params.add(limit);
-        }
-
-        if (withLimit && 1 == params.size()) {
-            select += " limit ?";
-            return this.jdbcClient.sql(select).param(limit);
-        }
-
-        select += " where " + columns.stream()
-                .map(w -> "\"PlaylistTrack\".\"" + w + "\" = ?")
-                .collect(Collectors.joining(" and "));
-
-        if (withLimit) {
-            select += " limit ?";
-        }
-
-        return this.jdbcClient.sql(select).params(params);
+        return createJdbcSpec(columns, params, input.getLimit());
     }
 }

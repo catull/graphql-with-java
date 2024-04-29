@@ -20,14 +20,6 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AccountController extends BaseController {
 
-    private static final RowMapper<account> rowMapper =
-        (rs, rowNum) -> new account (
-            UUID.fromString(rs.getString("id")),
-            rs.getString("name"),
-            rs.getString("created_at"),
-            rs.getString("updated_at")
-        );
-
     public AccountController(final JdbcClient jdbcClient) {
         super (jdbcClient);
     }
@@ -57,6 +49,14 @@ public class AccountController extends BaseController {
 
         return spec(input).query(rowMapper).optional().orElse(null);
     }
+
+    private static final RowMapper<account> rowMapper =
+        (rs, rowNum) -> new account (
+            UUID.fromString(rs.getString("id")),
+            rs.getString("name"),
+            rs.getString("created_at"),
+            rs.getString("updated_at")
+        );
 
     private StatementSpec spec(final AccountInput input) {
         List<String> columns = new ArrayList<>();

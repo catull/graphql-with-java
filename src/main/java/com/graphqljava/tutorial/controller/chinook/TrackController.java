@@ -2,8 +2,8 @@ package com.graphqljava.tutorial.controller.chinook;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import com.graphqljava.tutorial.controller.BaseController;
 import com.graphqljava.tutorial.model.chinook.Album;
 import com.graphqljava.tutorial.model.chinook.Genre;
 import com.graphqljava.tutorial.model.chinook.InvoiceLine;
@@ -21,24 +21,15 @@ import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class TrackController {
-    private final JdbcClient jdbcClient;
-
-    private static final RowMapper<Track>
-            rowMapper = (rs, rowNum) -> new Track(
-            rs.getInt("TrackId"),
-            rs.getString("Name"),
-            rs.getInt("AlbumId"),
-            rs.getInt("GenreId"),
-            rs.getInt("MediaTypeId"),
-            rs.getString("Composer"),
-            rs.getInt("Milliseconds"),
-            rs.getInt("Bytes"),
-            rs.getFloat("UnitPrice")
-    );
+public class TrackController extends BaseController {
 
     public TrackController(final JdbcClient jdbcClient) {
-        this.jdbcClient = jdbcClient;
+        super (jdbcClient);
+    }
+
+    @Override
+    public String getTablePrefix() {
+        return "\"Track\"";
     }
 
     @QueryMapping
@@ -110,89 +101,33 @@ public class TrackController {
         return spec(input).query(rowMapper).optional().orElse(null);
     }
 
-    private StatementSpec spec(final TrackInput input) {
+    private static final RowMapper<Track>
+        rowMapper = (rs, rowNum) -> new Track (
+            rs.getInt("TrackId"),
+            rs.getString("Name"),
+            rs.getInt("AlbumId"),
+            rs.getInt("GenreId"),
+            rs.getInt("MediaTypeId"),
+            rs.getString("Composer"),
+            rs.getInt("Milliseconds"),
+            rs.getInt("Bytes"),
+            rs.getFloat("UnitPrice")
+        );
+
+    protected StatementSpec spec(final TrackInput input) {
         List<String> columns = new ArrayList<>();
         List<Object> params = new ArrayList<>();
-        String select = "select * from \"Track\"";
 
-        Integer trackId = input.getTrackId();
-        if (null != trackId) {
-            columns.add("TrackId");
-            params.add(trackId);
-        }
+        extractInputParameterAndValue(columns, params, "TrackId", input.getTrackId());
+        extractInputParameterAndValue(columns, params, "Name", input.getName());
+        extractInputParameterAndValue(columns, params, "AlbumId", input.getAlbumId());
+        extractInputParameterAndValue(columns, params, "MediaTypeId", input.getMediaTypeId());
+        extractInputParameterAndValue(columns, params, "GenreId", input.getGenreId());
+        extractInputParameterAndValue(columns, params, "Composer", input.getComposer());
+        extractInputParameterAndValue(columns, params, "Milliseconds", input.getComposer());
+        extractInputParameterAndValue(columns, params, "Bytes", input.getBytes());
+        extractInputParameterAndValue(columns, params, "UnitPrice", input.getUnitPrice());
 
-        String name = input.getName();
-        if (null != name) {
-            columns.add("Name");
-            params.add(name);
-        }
-
-        Integer albumId = input.getAlbumId();
-        if (null != albumId) {
-            columns.add("AlbumId");
-            params.add(albumId);
-        }
-
-        Integer mediaTypeId = input.getMediaTypeId();
-        if (null != mediaTypeId) {
-            columns.add("MediaTypeId");
-            params.add(mediaTypeId);
-        }
-
-        Integer genreId = input.getGenreId();
-        if (null != genreId) {
-            columns.add("GenreId");
-            params.add(genreId);
-        }
-
-        String composer = input.getComposer();
-        if (null != composer) {
-            columns.add("Composer");
-            params.add(composer);
-        }
-
-        Integer milliseconds = input.getMilliseconds();
-        if (null != milliseconds) {
-            columns.add("Milliseconds");
-            params.add(milliseconds);
-        }
-
-        Integer Bytes = input.getBytes();
-        if (null != Bytes) {
-            columns.add("Bytes");
-            params.add(Bytes);
-        }
-
-        Float unitPrice = input.getUnitPrice();
-        if (null != unitPrice) {
-            columns.add("UnitPrice");
-            params.add(unitPrice);
-        }
-
-        int limit = input.getLimit();
-        boolean withLimit = limit > 0;
-        if (!withLimit && params.isEmpty()) {
-            return this.jdbcClient.sql(select);
-        }
-
-        if (withLimit) {
-            params.add(limit);
-        }
-
-        if (withLimit && 1 == params.size()) {
-            select += " limit ?";
-            return this.jdbcClient.sql(select).param(limit);
-        }
-
-        select += " where " + columns.stream()
-                .map(w -> "\"Track\".\"" + w + "\" = ?")
-                .collect(Collectors.joining(" and "));
-
-        if (withLimit) {
-            select += " limit ?";
-        }
-
-        return this.jdbcClient.sql(select).params(params);
+        return createJdbcSpec(columns, params, input.getLimit());
     }
-
 }

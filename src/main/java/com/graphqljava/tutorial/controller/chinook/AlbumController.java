@@ -2,8 +2,8 @@ package com.graphqljava.tutorial.controller.chinook;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import com.graphqljava.tutorial.controller.BaseController;
 import com.graphqljava.tutorial.model.chinook.Album;
 import com.graphqljava.tutorial.model.chinook.Track;
 import com.graphqljava.tutorial.model.chinook.Artist;
@@ -18,18 +18,15 @@ import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class AlbumController {
-    private final JdbcClient jdbcClient;
-
-    private static final RowMapper<Album>
-            rowMapper = (rs, rowNum) -> new Album(
-            rs.getInt("AlbumId"),
-            rs.getString("Title"),
-            rs.getInt("ArtistId")
-    );
+public class AlbumController extends BaseController {
 
     public AlbumController(final JdbcClient jdbcClient) {
-        this.jdbcClient = jdbcClient;
+        super (jdbcClient);
+    }
+
+    @Override
+    public String getTablePrefix() {
+        return "\"Album\"";
     }
 
     @QueryMapping
@@ -63,52 +60,21 @@ public class AlbumController {
         return spec(input).query(rowMapper).optional().orElse(null);
     }
 
+    private static final RowMapper<Album>
+        rowMapper = (rs, rowNum) -> new Album (
+            rs.getInt("AlbumId"),
+            rs.getString("Title"),
+            rs.getInt("ArtistId")
+        );
+
     private StatementSpec spec(final AlbumInput input) {
         List<String> columns = new ArrayList<>();
         List<Object> params = new ArrayList<>();
-        String select = "select * from \"Album\"";
 
-        Integer albumId = input.getAlbumId();
-        if (null != albumId) {
-            columns.add("AlbumId");
-            params.add(albumId);
-        }
+        extractInputParameterAndValue(columns, params, "AlbumId", input.getAlbumId());
+        extractInputParameterAndValue(columns, params, "Title", input.getTitle());
+        extractInputParameterAndValue(columns, params, "ArtistId", input.getArtistId());
 
-        Integer artistId = input.getArtistId();
-        if (null != artistId) {
-            columns.add("ArtistId");
-            params.add(artistId);
-        }
-
-        String title = input.getTitle();
-        if (null != title) {
-            columns.add("Title");
-            params.add(title);
-        }
-
-        int limit = input.getLimit();
-        boolean withLimit = limit > 0;
-        if (!withLimit && params.isEmpty()) {
-            return this.jdbcClient.sql(select);
-        }
-
-        if (withLimit) {
-            params.add(limit);
-        }
-
-        if (withLimit && 1 == params.size()) {
-            select += " limit ?";
-            return this.jdbcClient.sql(select).param(limit);
-        }
-
-        select += " where " + columns.stream()
-                .map(w -> "\"Album\".\"" + w + "\" = ?")
-                .collect(Collectors.joining(" and "));
-
-        if (withLimit) {
-            select += " limit ?";
-        }
-
-        return this.jdbcClient.sql(select).params(params);
+        return createJdbcSpec(columns, params, input.getLimit());
     }
 }

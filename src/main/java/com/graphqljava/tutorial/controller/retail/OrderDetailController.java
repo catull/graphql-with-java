@@ -21,16 +21,6 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class OrderDetailController extends BaseController {
 
-    private static final RowMapper<order_detail> rowMapper =
-        (rs, rowNum) -> new order_detail (
-            UUID.fromString(rs.getString("id")),
-            UUID.fromString(rs.getString("order_id")),
-            UUID.fromString(rs.getString("product_id")),
-            rs.getInt("units"),
-            rs.getString("created_at"),
-            rs.getString("updated_at")
-        );
-
     public OrderDetailController(final JdbcClient jdbcClient) {
         super (jdbcClient);
     }
@@ -72,6 +62,16 @@ public class OrderDetailController extends BaseController {
 
         return spec(input).query(rowMapper).list();
     }
+
+    private static final RowMapper<order_detail> rowMapper =
+        (rs, rowNum) -> new order_detail (
+            UUID.fromString(rs.getString("id")),
+            UUID.fromString(rs.getString("order_id")),
+            UUID.fromString(rs.getString("product_id")),
+            rs.getInt("units"),
+            rs.getString("created_at"),
+            rs.getString("updated_at")
+        );
 
     private StatementSpec spec(final OrderDetailInput input) {
         List<String> columns = new ArrayList<>();
