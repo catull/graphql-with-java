@@ -11,6 +11,7 @@ public class OrderInput {
     private UUID id;
     private UUID account_id;
     private String status;
+    private String region;
     private String created_at;
     private String updated_at;
     private int limit;
