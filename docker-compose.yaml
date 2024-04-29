@@ -7,8 +7,11 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/pgdata
     volumes:
       - ./initdb.d-postgres:/docker-entrypoint-initdb.d:ro
+      - type: tmpfs
+        target: /var/lib/pg/data
   graphql-java:
     build: .
     ports:
