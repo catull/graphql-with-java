@@ -37,3 +37,9 @@ input ProductInput {
   updated_at: String
   limit     : Int
 }
+
+input RegionInput {
+  value      : String
+  description: String
+  limit     : Int
+}

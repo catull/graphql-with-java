@@ -15,6 +15,7 @@ type order {
   id        : ID!
   account_id: ID
   status    : String
+  region    : String
   created_at: String
   updated_at: String
   # relations
@@ -42,4 +43,9 @@ type product {
   updated_at: String
   # relations
   order_details(input: OrderDetailInput): [order_detail]
+}
+
+type region {
+  value      : String
+  description: String
 }
