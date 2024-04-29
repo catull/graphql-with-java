@@ -6,6 +6,7 @@ public record order (
     UUID id,
     UUID account_id,
     String status,
+    String region,
     String created_at,
     String updated_at
 ) {
