@@ -1,8 +1,10 @@
 package com.graphqljava.tutorial.controller.retail;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.graphqljava.tutorial.controller.BaseController;
 import com.graphqljava.tutorial.model.retail.account;
 import com.graphqljava.tutorial.model.retail.order;
 import com.graphqljava.tutorial.model.retail.input.AccountInput;
@@ -16,40 +18,55 @@ import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class AccountController {
-    private final JdbcClient jdbcClient;
+public class AccountController extends BaseController {
 
-    private final RowMapper<account> rowMapper =
-            (rs, rowNum) -> new account
-                (UUID.fromString(
-                rs.getString("ID")),
-                rs.getString("name"),
-                rs.getString("created_at"),
-                rs.getString("updated_at"));
+    private static final RowMapper<account> rowMapper =
+        (rs, rowNum) -> new account (
+            UUID.fromString(rs.getString("id")),
+            rs.getString("name"),
+            rs.getString("created_at"),
+            rs.getString("updated_at")
+        );
 
     public AccountController(final JdbcClient jdbcClient) {
-        this.jdbcClient = jdbcClient;
+        super (jdbcClient);
     }
 
-    @SchemaMapping
-    public account account(final order order, final @Argument AccountInput input) {
-        UUID accountId = null != input && null != input.getId() ? input.getId() : order.account_id();
-
-        return this.jdbcClient
-            .sql("select * from \"account\" where id = ?")
-            .param(accountId)
-            .query(this.rowMapper)
-            .optional()
-            .orElse(null);
+    @Override
+    public String getTablePrefix() {
+        return "\"account\"";
     }
 
     @QueryMapping
-    public List<account> accounts(final @Argument AccountInput input) {
-        int limit = null == input ? 0 : input.getLimit();
-        StatementSpec
-                spec = limit < 1 ?
-                this.jdbcClient.sql("select * from \"account\"") :
-                this.jdbcClient.sql("select * from \"account\" limit ?").param(limit);
-        return spec.query(this.rowMapper).list();
+    public List<account> accounts(@Argument AccountInput input) {
+        if (null == input) {
+            input = new AccountInput();
+        }
+
+        return spec(input).query(rowMapper).list();
+    }
+
+    @SchemaMapping
+    public account account(final order order, @Argument AccountInput input) {
+        if (null == input) {
+            input = new AccountInput();
+        }
+        if (null == input.getId()) {
+            input.setId(order.account_id());
+        }
+
+        return spec(input).query(rowMapper).optional().orElse(null);
+    }
+
+    private StatementSpec spec(final AccountInput input) {
+        List<String> columns = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        extractInputParameterAndValue(columns, params, "id", input.getId());
+        extractInputParameterAndValue(columns, params, "name", input.getName());
+        extractInputParameterAndValue(columns, params, "created_at", input.getCreated_at());
+        extractInputParameterAndValue(columns, params, "updated_at", input.getUpdated_at());
+
+        return createJdbcSpec(columns, params, input.getLimit());
     }
 }
