@@ -60,7 +60,7 @@ done):
 - simplicity :: GraphQL puts clients in the driver's seat, so there
   had better be some good ergonomics for driving.  GraphQL's
   highly-regular machine-readable syntax, simple execution model, and
-  simple [[https://spec.graphql.org/][specification]] lend themselves to interoperable and composable
+  simple [[https://spec.graphql.org/][specification]] lend themselves to inter-operable and composable
   tools:
   - [[https://altairgraphql.dev/][query]] [[https://github.com/graphql/graphiql/tree/main/packages/graphiql#readme][tools]]
   - [[https://the-guild.dev/graphql/hive][schema registries]]
@@ -82,7 +82,7 @@ JSON and can be boiled down to a few simple features:
   type essentially is a set of rules for determining if a piece of
   data--or a request for that piece of data--validly conforms to the
   given type.  A GraphQL type is very much like a user-defined type in
-  programming languages like C++, Java, and TypeScript, and is very
+  programming languages like C++, Java, and Typescript, and is very
   much like a table in a relational database.
 - field :: A field within /one/ type contains one or more pieces of
   data that validly conform to /another/ type, thus establishing
@@ -109,7 +109,7 @@ GraphQL's expressivity, efficiency, discoverability, and simplicity
 makes life easier for data consumers.
 #+end_quote
 
-However, there's a corrollary:
+However, there's a corollary:
 
 #+begin_quote
 GraphQL's expressivity, efficiency, discoverability, and simplicity
@@ -151,7 +151,7 @@ there are three important interdependent players in this space:
   Spring Boot then /stop here!/ 🛑 Since this is a prerequisite, in
   the parlance of the [[https://www.thoughtworks.com/radar][ThoughtWorks Radar]] this is unavoidably *Adopt*.
 - Netflix DGS :: [[https://netflix.github.io/dgs/][DGS]] is a higher-level library for working with
-  GraphQL in Java /with Spring Boot/, which begain in 2021.  If you're
+  GraphQL in Java /with Spring Boot/, which began in 2021.  If you're
   using DGS the you /will/ also be using graphql-java under-the-hood,
   but typically you won't come into contact with graphql-java.
   Instead, you will be sprinkling [[https://en.wikipedia.org/wiki/Java_annotation][annotations]] throughout the Java code
@@ -235,7 +235,7 @@ application."  For the purpose of this guide, what /I/ mean by "real
 application" in this settings is an application that has at least
 these features:
 
-- persistance :: Many [[https://www.graphql-java.com/tutorials/getting-started-with-spring-boot][tutorials]], [[https://netflix.github.io/dgs/][getting-started guides]], and [[https://docs.spring.io/spring-graphql/reference/][overviews]]
+- persistence :: Many [[https://www.graphql-java.com/tutorials/getting-started-with-spring-boot][tutorials]], [[https://netflix.github.io/dgs/][getting-started guides]], and [[https://docs.spring.io/spring-graphql/reference/][overviews]]
   only address in-memory data models, stopping well short of
   interacting with a database.  This guide shows you /some/ ways to
   cross this crucial chasm and discusses /some/ of the consequences,
@@ -246,7 +246,7 @@ these features:
   off-the-table for now.
 - flexibility :: I wrote above that just /how/ expressive, efficient,
   discoverable, and simple we make our GraphQL API is technically a
-  choice we make, but is practcally a property that emerges from other
+  choice we make, but is practically a property that emerges from other
   choices we make.  I also wrote that building GraphQL API servers is
   difficult for data producers.  Consequently, many data producers
   cope with that difficulty by dialing way back on those other
@@ -329,7 +329,7 @@ Java /for a relational database/ is the following:
 15. Upgrade /some/ of those resolver/data-fetcher methods by replacing
     ~@SchemaMapping~ or ~@QueryMapping~ with ~@BatchMapping~.  This
     latter annotation signals to Spring for GraphQL that we want make
-    the execution more efficient by combatting the N+1 problem, and
+    the execution more efficient by combating the N+1 problem, and
     we're prepared to pay the price in more code in order do do it.
 16. Refactor those ~@BatchMapping~-annotated methods to support the
     data loader pattern, by accepting (and processing) a /list/ of
@@ -380,7 +380,7 @@ Start the server with:
 The Chinook files from [[https://www.yugabyte.com/blog/postgresql-how-to-installing-the-chinook-sample-db-on-a-distributed-sql-database/][YugaByte]] work out-of-the-box for PostgreSQL and
 are a good choice.  Just make sure that there is a sub-directory
 ~initdb.d-postgres~ and download the Chinook DDL and DML files into
-that diretory, taking care to give them numeric prefixes so that
+that directory, taking care to give them numeric prefixes so that
 they're run by the PostgreSQL initialization script in the proper
 order.
 
@@ -440,9 +440,7 @@ way using ~psql~.
 You should at least see Chinook-specific tables like ~Album~,
 ~Artist~, and ~Track~.
 
-** Step 8:  Choose the [[https://start.spring.io/][Spring Initializr]] for bootstrapping the appliction.
-
-[[https://netflix.github.io/dgs/images/initializr.png]]
+** Step 8:  Choose the [[https://start.spring.io/][Spring Initializr]] for bootstrapping the application.
 
 The important things with this form are to make these choices:
 
@@ -556,7 +554,7 @@ like.  Or, just use the complete version from the shared repository.
 
 ** Step 10:  Write Java model classes.
 
-Within the standar Maven directory layout, Java source code goes into
+Within the standard Maven directory layout, Java source code goes into
 ~./src/main/java~ and its sub-directories.  Within an appropriate
 sub-directory for whatever Java package you use, create Java model
 classes.  These can be Plain Old Java Objects ([[https://en.wikipedia.org/wiki/Plain_old_Java_object][POJOs]]).  They can be
@@ -737,7 +735,7 @@ patterns I want you to see through the forest of code is this:
    Filter predicates?  Aggregations?  Supporting those cases will
    involve more ~ArgumentValue<>~ parameters, more ~SchemaMapping~
    resolver methods, and more combinations thereof.  Deal with it.
-8. You /will/ experience the urge to be clever, to create absractions
+8. You /will/ experience the urge to be clever, to create abstractions
    that dynamically respond to more and more complex combinations of
    parameters, filters, and other conditions.  Congratulations:
    you're on your way to building a general-purpose query engine.
@@ -789,7 +787,7 @@ its face, this /seems/ like an alarmingly inefficient way to go about
 fetching these data.  Is there another way?
 
 There is another way, it it is the standard answer within the GraphQL
-community for combatting this N+1 problem:  the data loader pattern
+community for combating this N+1 problem:  the data loader pattern
 (aka "batching").  This encompasses two ideas:
 
 1. Rather than fetch the related child entities (e.g. ~Album~) for a
@@ -893,7 +891,7 @@ into a "graph", internal nodes in the graph are processed individually
 by resolvers, but the data are passed up the graph [[https://en.wikipedia.org/wiki/Dataflow_programming][dataflow]] style,
 accumulating into a JSON envelope that is returned to the user.  The
 GraphQL libraries are decomposing the incoming queries into something
-like an Abstract Syntax Tree ([[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]]), firing SQL statmes for all the
+like an Abstract Syntax Tree ([[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]]), firing SQL statements for all the
 internal nodes (ignoring the data loader pattern for a moment), then
 re-composing the data.  And, we are its willing accomplices!
 
@@ -917,7 +915,7 @@ way" of resolvers and even data loaders.
 
 Building a GraphQL server with a network of nested resolvers
 offers some flexibility and dynamism, and requires a lot of code.  Adding
-in more flexbility and dynamism with limits, pagination, filtering,
+in more flexibility and dynamism with limits, pagination, filtering,
 and sorting, requires more code still. And while it may be dynamic, it
 will also be very chatty with the database, as we saw.  Reducing the
 chattiness necessitates composing the many fragmentary SQL statements
@@ -954,3 +952,16 @@ needs justify it.  This is the [[https://en.wikipedia.org/wiki/Boss_(video_games
 maturity.
 
 * How to choose "Buy" over "Buy"
+
+#  LocalWords:  runtime Initializr QueryMapping YugaByte InvoiceLine
+#  LocalWords:  MediaType PlaylistTrack ArtistById AlbumById AlbumId
+#  LocalWords:  TrackById PlaylistById PlaylistTrackById GenreById
+#  LocalWords:  MediaTypeById CustoemrById EmployeeById InvoiceById
+#  LocalWords:  InvoiceLineById ArtistId CustomerId FirstName mapRow
+#  LocalWords:  LastName PostalCode SupportRepId SupportRep Autowired
+#  LocalWords:  ChinookModels ChinookControllers ArtistController
+#  LocalWords:  JdbcClient jdbcClient RowMapper ResultSet rowNum
+#  LocalWords:  SQLException getInt getString SchemaMapping param
+#  LocalWords:  PreparedStatement orElse artistById ArgumentValue
+#  LocalWords:  StatementSpec isOmitted compilable TrackId
+#  LocalWords:  BatchMapping albumsForArtist
