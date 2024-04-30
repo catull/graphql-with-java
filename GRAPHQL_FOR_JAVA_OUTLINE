@@ -1,0 +1,203 @@
+# -*- mode: org; -*-
+
+#+STARTUP: indent
+
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: GraphQL For Java
+#+date: <2024-04-29 Mon>
+#+author: David A. Ventimiglia
+#+email: davidaventimiglia@hasura.io
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 29.3 (Org mode 9.6.15)
+#+cite_export:
+
+
+
+* GraphQL
+
+** What is GraphQL?
+
+GrapQL is an evolution from and an alternative to REST-based web services.  
+
+- GraphQL is an evolution from and a substitute for REST-based web micro-services.
+- GraphQL is a general-purpose query language.
+- GraphQL is almost isomorphic to SQL.
+- SQL is more powerful than GraphQL is, however, GraphQL is more regular than SQL is.
+- GraphQL is more machine-readable than SQL, owing to its high-regular syntax, its strongly-typed data model, and its small and concise specification.
+- Consequently, GraphQL arguably has better tooling than SQL, with GraphQL query tools, editor plugins, and API middle-ware libraries.
+- GraphQL comprises Types.
+- A GraphQL Type comprises an aggregation of fields.
+- GraphQL Types can relate to each other.
+- An advantage of GraphQL over REST-based web micro-services is that, as a general-purpose query language, GraphQL is highly-flexible.
+- GraphQL allows clients to express efficiently exactly the data that they need, no more and no less.
+- GraphQL can also be considered a developer tool.
+- GraphQL can also be considered a /lingua franca/ between heterogeneous data systems.
+- GraphQL is not perfect, but GraphQL is practical, addressing specific shortcomings of REST-based web micro-services.
+
+** Why do I need GraphQL?
+
+- GraphQL makes life easier for clients, data consumers, and front-end developers.
+- GraphQL makes life easier for data processing systems and intermediaries, because it offers the potential to access the data in relatively few network operations.
+
+** Why is it hard to get GraphQL?
+
+- GraphQL makes life harder for servers, data producers, and back-end developers.
+- The potential that GraphQL provides for accessing data in relatively few network operations is difficult to realize.
+- That potential is difficult to realize because supporting the highly-flexible general-purpose query language of GraphQL for front-end data consumers necessitates providing highly-flexible general-purpose back-end data producer servers.
+- Providing highly-flexible general-purpose back-end data producer servers is a technologically difficult and demanding task.
+
+** How do I get GraphQL?
+
+*** Build a GraphQL server.
+
+- One way to get a GraphQL server is to build a GraphQL server.
+- A GraphQL server can be built in almost any general-purpose programming language.
+- Popular choices for building GraphQL servers are Java, Python, and JavaScript.
+- The standard catechism for building GraphQL servers in any programming language involves the fundamental concept of a "resolver".
+- A GraphQL resolver, also known as a "data fetcher", applies the "Single Responsibility Principle" of software architecture and design.
+- A GraphQL resolver is intended to do one an only one thing.
+- In doing one and only one thing, a GraphQL resolver may delegate to other GraphQL resolvers.
+- A GraphQL resolver is meant to obtain the data for one field in a GraphQL type.
+- A field in a GraphQL type may be either a simple scalar field such as a Number, a Boolean, or a String.
+- Alternatively, a field in a GraphQL type refer to another aggregated type.
+- Typically, the presence of a scalar field does not necessitate writing any special code.
+- However, a GraphQL field that refers to another aggregated type typically does necessitate special code, which is to say another resolver.
+- When a GraphQL server processes or responds to a GraphQL request, its execution model is of a call-graph among a nested network of resolvers.
+- Typically, this means writing a lot of code, whether in Java, Python, or JavaScript.
+- Moreover, the standard catechism for building GraphQL servers with a nested network of resolvers can lead to inefficient processing.
+- This inefficient processing can eliminate the potential of GraphQL for accessing data in relatively few network operations.
+- Typically, a GraphQL server built in this way is bespoke and is tied to the underlying data model.
+- Moreover, the number of code modules that must be written will scale with the number of data elements.
+- For example, a GraphQL server for a relational database with 1000 tables typically will require on the order of 1000 resolvers, if the standard catechism is followed.
+- One benefit of building a GraphQL server from scratch, however, is that it gives you a natural place to put business logic:  in the code of the resolvers.
+- One drawback of building a GraphQL server from scratch is supplying "non-functional" concerns.
+- Non-functional concerns are those features of your code which, if they are not present, render your application non-functional.
+- Examples of non-functional concerns are:  performance, reliability, caching, security, and observability.
+
+*** Get a GraphQL server.
+
+- Another way to get a GraphQL server is to obtain on that has already been built.
+- There are several places from which to obtain pre-built GraphQL servers.  For example:  Hasura and PostGraphile.
+- A general-purpose pre-built GraphQL server cannot possibly be tied to the underlying data model.
+- A benefit of obtaining a pre-built GraphQL server is that it reduces or eliminates the need to write a lot of code for all of the resolvers.
+- A drawback of obtaining a pre-built GraphQL server is that it removes a natural place to put business logic:  in the code of the resolvers.
+- A benefit of obtaining a pre-built GraphQL server is that it makes it easier to address non-functional concerns like performance, reliability, caching, security, and observability.
+
+* Building a GraphQL server
+
+** The easy way
+
+- The "easy way" of building a GraphQL server is what one typically encounters in the many tutorials, primers, and "Getting Started" guides on the internet.
+- The "easy way" involves writing the aforementioned nested network of resolvers.
+- The easy way therefore adopts a recursive "divide-and-conquer" approach in that it divides and sub-divides the problem of serving the GraphQL request into ever-smaller pieces.
+- The easy way presented in tutorials, primers, and "Getting Started" guides almost always avoid the difficult topic of fetching data from a database.
+- These tutorials and primers usually fetch data from an in-memory data model, which lends itself well to the recursive divide-and-conquer nested resolver approach.
+- The easy way may involve a lot of code, but it's repetitive boilerplate code that is easy to reason about and easy to write.
+
+** The real way
+
+- Contrasting the easy way of building a GraphQL server is what I personally call the "real way."
+- The "real way" confronts the reality of fetching data from a database, which is very common in real-world applications.
+- A naive implementation of the standard catechism of a nested network of GraphQL resolvers naturally leads to a nested network of SQL statements sent to the database.
+- This nested network of SQL statements is highly-flexible, supporting the flexibility demands of a GraphQL server.
+- However, this nested network of SQL statements is also highly-inefficient, sending too many SQL statements to the database.
+- This problem of sending too many SQL statements to the database is very important and famous, known universally as "the N+1 problem".
+- In the N+1 problem, the number of SQL statements scales exponentially with the depth of the GraphQL query.
+- Consider for example GraphQL types ~Artist~ and ~Album~ and ~Track~ from the well-known Chinook database, where many ~Track~ items belong to a given ~Album~ item, and many ~Album~ items belong to a given ~Artist~.
+- Suppose there are ~m~ number of ~Track~ items per ~Album~, ~m~ number of ~Album~ items per ~Artist~, and in general any item has a cardinality of ~m~ sub-items below it in the type hierarchy.
+- Suppose there are ~n~ number of levels in the graph, in this case ~n=3~ for ~Artist~, ~Album~, and ~Track~.
+- Typically the number of SQL statements will scale as ~m~^~n~.  This is exponential growth in the number of SQL statements.
+- A less-naive implementation of the standard catechism of nested resolvers is to engineer them so that they issue fewer SQL statements.  This combats "the N+1 problem."
+- The standard way of doing this in the GraphQL catechism is to use something called "the data loader pattern."
+- The data loader pattern brings the growth of the number of SQL statements from exponential in the number of levels, to linear in the number of levels.
+- I.e., if there are ~n~ levels in GraphQL query, there will be of order ~n~ SQL statements.
+- This is an improvement, however it does not meet the theoretical minimum for the number of SQL statements, which is 1.  One SQL statement is the best case (ignoring for the moment 0 SQL statements when data caching is present).
+- Continuing the discussion of the "real way" of building GraphQL servers which have to access a SQL database, such applications often will involve an Object-Relational-Mapping (ORM) library.
+- An ORM mediates the interaction between an in-memory object data model in the programming language, such as Java, and the relational model in the SQL database.
+- Writing the code for the highly-flexible nested network of resolvers is difficult.  Writing that code through an ORM is more difficult.  Combating the N+1 problem with the data loader patterns, through an ORM, is more difficult still.
+- Despite their differences, the "real way" and the "easy way" still retain some things in common.
+- One thing in common between the "real way" and the "easy way" is that they both are bespoke and are tied to the underlying data model.
+
+** The natural way
+
+- Anyone who builds more than one GraphQL server quickly recognizes the amount of repetitive boilerplate code that is involved.
+- Likewise, such a person becomes aware of the N+1 problem, the data loader pattern solution, and the recursive divide-and-conquer architecture of GraphQL servers.
+- Eventually, there occurs a natural temptation to abstract general principles and architectural patterns.
+- Likewise, there is a natural temptation to write less code, but have that code be less naive and more sophisticated.
+- Observing that in combating the N+1 problem by reducing the number of SQL statements from ~m^n~ to just ~n~, we saw that the optimal non-zero number of SQL statements is just 1, there is a natural urge to compose one SQL statement.
+- This observation urges us to reverse the divide-and-conquer approach.
+- Instead of, or in addition to, recursively dividing the GraphQL query via nested resolvers, we also recursively build up the elements of a single SQL statement.
+- As an aside, a crucially-important fact about GraphQL is that the data response is nested JSON.
+- Technically, the data response from a SQL database is not nested JSON but instead is in tabular form.
+- Usually, another task of writing a GraphQL server is converting the tabular data from the database into nested JSON for the response, though in practice GraphQL libraries will help with this.
+- Therefore, an added benefit of building up one SQL statement would be if we can somehow write the SQL so as to convince the database to create the nested JSON for us.
+- The good news is that most modern relational databases, such as Oracle, MySQL, Microsoft SQL Server, PostgreSQL, etc., are capable of generating nested JSON data.
+- Therefore, the more sophisticated "natural way" naturally leads to generating a single SQL statement that coaxes the database into doing all of the hard work for us:  fetching, filtering, joining, and turning into JSON.
+- Reflecting on the natural way, we see that essentially it involves building a compiler, compiling GraphQL into (for example) SQL.
+- Reflecting further, we see that we were always building a compiler even in the aforementioned "real way" of building a GraphQL server.
+- The trouble with the "real way" is that we didn't fully recognize or appreciate that this is what we were doing.
+- Fully recognizing and appreciating that what we're really doing is building a GraphQL-to-SQL compiler, allows us to tackle that problem deliberately rather than accidentally.
+- This is why we call this approach "the compiler approach" contrasting it with the "resolver approach."
+- What we call "the compiler approach" is what I have been calling "the natural way", and the "resolver approach" corresponds to what I have called "the real way" and "the easy way."
+- Besides its efficiency in having the fewest SQL statements and the least amount of code, "the compiler approach" is very general-purpose.  It is not bespoke and is not tied to the underlying data model.
+- This means that having built a GraphQL server once with "the compiler approach" or the natural way, one never need do it again, since it can be reused for any SQL data model.
+- The labor saved can therefore be applied to the aforementioned "non-functional concerns" of performance, reliability, security, and observability, which all-too-often are neglected for lack of time.
+- Eventually, one realizes that if "the compiler approach" need only be done once, it might as well be done by someone else and simple re-used.
+- This is the essence of the "buy-versus-build" trade-off.  You are "buying" a GraphQL server rather than building (many) GraphQL servers.
+
+** The trade-offs
+
+- Despite the realism of the "real way" over the "easy way", and despite the benefits of "the natural way" over both, there are some trade-offs.
+- That is, "the compiler approach" does have some drawbacks.
+- Some of those drawbacks are endemic to the "buy" side of the "buy-versus-build" decision.
+- Among those are accepting the design decisions made by other people.  The product--a GraphQL server in this case--you buy may embody different decisions from the ones you might have made.
+- Another drawback is simply the cost.  Often, one must pay real money for a high-quality pre-built system.
+- On the other hand, the "build" side of the decision necessitates developer time, which often dwarfs the cost of buying a system.
+- One other trade-off of the "buy" decision is that, being a no-code platform, the natural place to put business logic--in the code--is removed.
+
+* Getting a GraphQL server
+
+** PostGraphile
+
+- PostGraphile is a high-quality open-source pre-built GraphQL server for a relational database.
+- PostGraphile addresses some non-functional concerns like performance and reliability, though security and observability are less well developed.
+- PostGraphile adopts the aforementioned "compiler approach".
+- PostGraphile compiles GraphQL operations into highly-efficient SQL statements, that utilize the database to do most of the work of fetching the data and producing nested JSON.
+- PostGraphile is free to use, costing no money, and is open-source.
+- PostGraphile is /only/ for the PostgreSQL relational database.
+- PostGraphile does not really have any affordances for addressing business logic.
+- PostGraphile has no real affordances for data integration with other sources of data, such as REST-based web micro-services and other GraphQL servers.
+- PostGraphile does not offer enterprise support.
+
+** Hasura
+
+- Hasura is a high-quality open-source pre-built GraphQL server for relational databases.
+- Hasura addresses more non-functional concerns.  Besides performance and reliability, Hasura also addresses security and observability.
+- Hasura also adopts the aforementioned "compiler approach".
+- Hasura compiles GraphQL operations into highly-efficient SQL statements, that utilize the database to do most of the work of fetching the data, filtering it, and producing nested JSON.
+- Hasura is free to use for the PostgreSQL database, and is open-source.
+- Besides PostgreSQL, Hasura works for many other databases, relational and non-relational:  MySQL, Microsoft SQL Server, Oracle, Snowflake, etc.
+- Hasura recognizes that one huge source of business logic is authorization, which is having the code decide which operations are or are not allowed based on the role and identity and authentication credentials of the operator.
+- Therefore, Hasura addresses /this particular/ need for business logic with its permissions system.
+- Hasura recognizes that another huge source of business logic is input validation, which is having the code decide which data mutation operations are or are not allowed based on the content of the data and the context of the database.
+- Therefore, Hasura addresses /this particular/ need for business logic with its remote actions system.
+- Hasura recognizes that another huge source of business logic is side-effects, which is having the code cause real-world effects when data are changed, such as fulfilling a product, notifying an external system, or training a Machine Learning model.
+- Therefore, Hasura addresses /this particular/ need for business logic with its custom events system.
+- Hasura recognizes that another huge source of business logic is data transformation, which is having the code perform non-destructive computations over data that are being served.
+- Therefore, Hasura addresses /this particular/ need for business logic with its native queries system.
+- Hasura recognizes that another huge source of business logic is data integration, which is the blending and merging of data from heterogeneous third-party data sources.
+- Therefore, Hasura addresses /this particular/ need for business logic with its remote actions, remote schema, remote relationships, and remote joins systems.
+- Besides being open-source, Hasura is also a commercial product.
+- Therefore, Hasura is able to offer enterprise support.
+
+** The trade-offs
+
+- Just as there are trade-offs in the "buy-versus-build" decision, there are trade-offs in choosing between PostGraphile and Hasura.
+- PostGraphile is generally free to use, whereas in some settings Hasura costs money.
+- On the other hand, Hasura supports many more databases and data sources than PostGraphile does.

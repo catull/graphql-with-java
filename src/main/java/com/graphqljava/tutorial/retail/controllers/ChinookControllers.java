@@ -1,7 +1,7 @@
-package com.graphqljava.tutorial.retail.controllers;
+package com.graphqljava.tutorial.retail.controllers; // It's got to go into a package somewhere.
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.ResultSet;	// There's loads of symbols to import.
+import java.sql.SQLException;	// This is Java and there's no getting around that.
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,34 +29,34 @@ import com.graphqljava.tutorial.retail.models.ChinookModels.PlaylistTrack;
 import com.graphqljava.tutorial.retail.models.ChinookModels.Track;
 
 
-public class ChinookControllers {
+public class ChinookControllers { // You don't have to nest all your controllers in one file. It's just what I do.
     @Controller public static class ArtistController {
-	@Autowired JdbcClient jdbcClient;
-	RowMapper<Artist>
-	    mapper = new RowMapper<>() {
+	@Autowired JdbcClient jdbcClient; // Lots of ways to get DB access from the container.  This is one way in Spring Data.
+	RowMapper<Artist>		  // I'm not using an ORM, and only a tiny bit of help from Spring Data.
+	    mapper = new RowMapper<>() {  // Consequently, there are these RowMapper utility classes involved.
 		    public Artist mapRow (ResultSet rs, int rowNum) throws SQLException {
 			return
 			new Artist(rs.getInt("ArtistId"),
 				   rs.getString("Name"));}};
-	@SchemaMapping Artist Artist (Album album) {
-	    return
+	@SchemaMapping Artist Artist (Album album) { // @QueryMapping when we can, @SchemaMapping when we have to
+	    return				     // Here, we're getting an Artist for a given Album.
 		jdbcClient
-		.sql("select * from \"Artist\" where \"ArtistId\" = ? limit 1")
-		.param(album.ArtistId())
-		.query(mapper)
-		.optional()
+		.sql("select * from \"Artist\" where \"ArtistId\" = ? limit 1") // Simple PreparedStatement wrapper
+		.param(album.ArtistId()) // Fish out the relating field ArtistId and pass it into the PreparedStatement
+		.query(mapper)		 // Use our RowMapper to turn the JDBC Row into the desired model class object.
+		.optional()		 // Use optional to guard against null returns!
 		.orElse(null);}
-	@QueryMapping(name = "ArtistById") Artist
-	    artistById (ArgumentValue<Integer> id) {
+	@QueryMapping(name = "ArtistById") Artist // Another resolver, this time to get an Artist by its primary key identifier
+	    artistById (ArgumentValue<Integer> id) { // Note the annotation "name" parameter, when the GraphQL field name doesn't match exactly the method name
 	    for (Artist a : jdbcClient.sql("select * from \"Artist\" where \"ArtistId\" = ?").param(id.value()).query(mapper).list()) return a;
 	    return null;}
-	@QueryMapping(name = "Artist") List<Artist>
-	    artist (ArgumentValue<Integer> limit) {
+	@QueryMapping(name = "Artist") List<Artist> // Yet another resolver, this time to get a List of Artists.
+	    artist (ArgumentValue<Integer> limit) { // Note the one "limit" parameter.  ArgumentValue<T> is the way you do this with GraphQL for Java.
 	    StatementSpec
-		spec = limit.isOmitted() ?
+		spec = limit.isOmitted() ? // Switch SQL on whether we did or did not get the limit parameter.
 		jdbcClient.sql("select * from \"Artist\"") :
 		jdbcClient.sql("select * from \"Artist\" limit ?").param(limit.value());
-	    return
+	    return		// Run the SQL, map the results, return the List.
 		spec
 		.query(mapper)
 		.list();}}
@@ -77,16 +77,17 @@ public class ChinookControllers {
 		.query(mapper)
 		.optional()
 		.orElse(null);}
-	@BatchMapping(field = "Albums") public Map<Artist, List<Album>>
-	    albumsForArtist (List<Artist> artists) {
+	@BatchMapping(field = "Albums") public Map<Artist, List<Album>> // Switch to @BatchMapping
+	    albumsForArtist (List<Artist> artists) { // Take in a List of parents rather than a single parent
 	    return
 		jdbcClient
-		.sql("select * from \"Album\" where \"ArtistId\" in (:ids)")
-		.param("ids", artists.stream().map(x -> x.ArtistId()).toList())
-		.query(mapper)
+		.sql("select * from \"Album\" where \"ArtistId\" in (:ids)") // Use a SQL in clause taking a list of identifiers
+		.param("ids", artists.stream().map(x -> x.ArtistId()).toList()) // Fish the list of identifiers out of the list of parent objects
+		.query(mapper)	// Can re-use our usual mapper
 		.list()
-		.stream()
-		.collect(Collectors.groupingBy(x -> artists.stream().collect(Collectors.groupingBy(Artist::ArtistId)).get(x.ArtistId()).getFirst()));}
+		.stream().collect(Collectors.groupingBy(x -> artists.stream().collect(Collectors.groupingBy(Artist::ArtistId)).get(x.ArtistId()).getFirst()));
+	    // ^ Java idiom for grouping child Albums according to their parent Albums
+	}
 	@QueryMapping(name = "AlbumById") Album
 	    albumById (ArgumentValue<Integer> id) {
 	    for (Album a : jdbcClient.sql("select * from \"Album\" where \"AlbumId\" = ?").param(id.value()).query(mapper).list()) return a;
