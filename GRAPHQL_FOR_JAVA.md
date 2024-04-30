@@ -3,7 +3,7 @@
 
 # What is GraphQL and why do people want it?
 
-GraphQL is an important evolution in the design of Application Performance Interfaces (API), but even today it can be difficult to know how to get started with GraphQL, how to move beyond "Getting Started" with GraphQL, and how to move beyond the conventional wisdom on GraphQL. This is especially true for Java. This guide attempts to cover all these bases in three steps. First, I'll tell you what GraphQL is, and as a bonus I'll tell you what GraphQL *really* is. Second, I'll show you how to implement state-of-the-art GraphQL in Java for a real application. Third, I'll offer you an alternative path beyond the state-of-the-art that may suit your needs better in every dimension. And, if you feel like skipping to [the end](#org60d749f), who am I to stop you? It certainly will save a great deal of effort.
+GraphQL is an important evolution in the design of Application Performance Interfaces (API), but even today it can be difficult to know how to get started with GraphQL, how to move beyond "Getting Started" with GraphQL, and how to move beyond the conventional wisdom on GraphQL. This is especially true for Java. This guide attempts to cover all these bases in three steps. First, I'll tell you what GraphQL is, and as a bonus I'll tell you what GraphQL *really* is. Second, I'll show you how to implement state-of-the-art GraphQL in Java for a real application. Third, I'll offer you an alternative path beyond the state-of-the-art that may suit your needs better in every dimension. And, if you feel like skipping to [the end](#org153c47e), who am I to stop you? It certainly will save a great deal of effort.
 
 So, what *is* GraphQL? Well, GraphQL.org [says](https://graphql.org/learn/)
 
@@ -26,7 +26,7 @@ But, what *else* is GraphQL. What *really* is GraphQL? GraphQL is *also* a data 
 -   **types:** A [type](https://spec.graphql.org/October2021/#sec-Types) is a simple value (a [scalar](https://spec.graphql.org/October2021/#sec-Scalars)) or a set of fields (an [object](https://spec.graphql.org/October2021/#sec-Objects)). While you naturally introduce new types for your own problem domain, there are few special types (called [Operations](https://spec.graphql.org/October2021/#sec-Language.Operations)). One of theses is [Query](https://spec.graphql.org/October2021/#sec-Query), which is the root of requests for data (setting aside [Subscription](https://spec.graphql.org/October2021/#sec-Subscription) for now, for the sake of simplicity). A type essentially is a set of rules for determining if a piece of data&#x2013;or a request for that piece of data&#x2013;validly conforms to the given type. A GraphQL type is very much like a user-defined type in programming languages like C++, Java, and Typescript, and is very much like a table in a relational database.
 -   **field:** A field within *one* type contains one or more pieces of data that validly conform to *another* type, thus establishing *relationships* among types. A GraphQL field is very much like a property of a user-defined type in a programming language, and is very much like a column in a relational database. Relationships between GraphQL types are very much like pointers or references in programming languages, and are very much like foreign key constraints in relational databases.
 
-There's more to GraphQL, but that's pretty much the essence. Note the similarities between concepts in GraphQL and in programming languages, and especially between concepts in GraphQL and in relational databases. That will be important [later](#orgd3c4732).
+There's more to GraphQL, but that's pretty much the essence. Note the similarities between concepts in GraphQL and in programming languages, and especially between concepts in GraphQL and in relational databases. That will be important [later](#org531c8dd).
 
 OK, that's enough for now about what GraphQL *is*, but what is GraphQL *for*? Why should we consider GraphQL, especially as an alternative to REST? I listed above some of GraphQL's improvements over typical REST&#x2013;expressivity, efficiency, discoverability, simplicity&#x2013;but another perhaps more concise way to put it is this:
 
@@ -48,7 +48,7 @@ Another choice is over [build-versus-buy [PDF]​](https://www.thoughtworks.com/
 If we're building a GraphQL API server in Java, another choice is over whether to build it completely from scratch or to use libraries and frameworks, and if the latter then which libraries and frameworks to use. Let's set *that* aside, rightfully regard a complete [DIY](https://en.wikipedia.org/wiki/Do_it_yourself) solution as pointless masochism, and survey the landscape of Java libraries and frameworks for GraphQL. As of writing (April 2024) there are three important interdependent players in this space:
 
 -   **graphql-java:** [graphql-java](https://www.graphql-java.com/) is a lower-level foundational library for working with GraphQL in Java, which began in 2015. Since the other players depend on and use graphql-java, consider graphql-java to be *non-optional*. Another crucial choice is whether you are or are not using the [Spring Boot](https://spring.io/projects/spring-boot) framework. If you're *not* using Spring Boot then *stop here!* 🛑 Since this is a prerequisite, in the parlance of the [ThoughtWorks Radar](https://www.thoughtworks.com/radar) this is unavoidably **Adopt**.
--   **Netflix DGS:** [DGS](https://netflix.github.io/dgs/) is a higher-level library for working with GraphQL in Java *with Spring Boot*, which began in 2021. If you're using DGS then you *will* also be using graphql-java under-the-hood, but typically you won't come into contact with graphql-java. Instead, you will be sprinkling [annotations](https://en.wikipedia.org/wiki/Java_annotation) throughout the Java code to identify the code segments (called "resolvers" or "data fetchers"&#x2026;more on that [later](#orgd3c4732)) that execute GraphQL requests. Thoughtworks [said](https://www.thoughtworks.com/radar/languages-and-frameworks/netflix-dgs) **Trial** as of 2023 for DGS but this is a dynamic space and their opinion may have changed. I say **Hold**, for reasons given below.
+-   **Netflix DGS:** [DGS](https://netflix.github.io/dgs/) is a higher-level library for working with GraphQL in Java *with Spring Boot*, which began in 2021. If you're using DGS then you *will* also be using graphql-java under-the-hood, but typically you won't come into contact with graphql-java. Instead, you will be sprinkling [annotations](https://en.wikipedia.org/wiki/Java_annotation) throughout the Java code to identify the code segments (called "resolvers" or "data fetchers"&#x2026;more on that [later](#org531c8dd)) that execute GraphQL requests. Thoughtworks [said](https://www.thoughtworks.com/radar/languages-and-frameworks/netflix-dgs) **Trial** as of 2023 for DGS but this is a dynamic space and their opinion may have changed. I say **Hold**, for reasons given below.
 -   **Spring for GraphQL:** [Spring for GraphQL](https://spring.io/projects/spring-graphql) is *another* higher-level library for working with GraphQL in Java with Spring Boot, which began around 2023, and is also based on annotations. It may be too new for ThoughtWorks, but it's not too new for me. I say **adopt**, and read on for why.
 
 The makers of Spring for GraphQL [say](https://spring.io/projects/spring-graphql):
@@ -118,7 +118,7 @@ That is a *long recipe* above! Instead of going into chapter-and-verse for every
 
 Again, there are other ways to pull this off, but this is one good way.
 
-```docker-compose
+```yaml
 version: "3.6"
 services:
   postgres:
@@ -144,7 +144,7 @@ Start the server with:
 
 The Chinook files from [YugaByte](https://www.yugabyte.com/blog/postgresql-how-to-installing-the-chinook-sample-db-on-a-distributed-sql-database/) work out-of-the-box for PostgreSQL and are a good choice. Just make sure that there is a sub-directory `initdb.d-postgres` and download the Chinook DDL and DML files into that directory, taking care to give them numeric prefixes so that they're run by the PostgreSQL initialization script in the proper order.
 
-```bash
+```shell
 mkdir -p ./initdb.d-postgres
 wget -O ./initdb.d-postgres/04_chinook_ddl.sql
 wget -O ./initdb.d-postgres/05_chinook_genres_artists_albums.sql
@@ -153,19 +153,19 @@ wget -O ./initdb.d-postgres/06_chinook_songs.sql
 
 Now, you can start the database service using Docker Compose.
 
-```bash
+```shell
 docker compose up -d
 ```
 
 or
 
-```bash
+```shell
 docker-compose up -d
 ```
 
 There are many ways to spot check the validity of the database. If the Docker Compose service seems to have started correctly, here's one way using `psql`.
 
-```bash
+```shell
 psql "postgresql://postgres:postgres@localhost:5432/postgres" -c '\d'
 ```
 
@@ -411,12 +411,12 @@ Now for the meat of the code. Aside from niggling details like "How do I get a d
 
 1.  Every field in our schema file (`schema.graphqls`) which isn't a simple scalar field (e.g., `Int`, `String`, `Boolean`) probably will need a resolver/data-fetcher.
 2.  Every resolver is implemented with a Java method.
-3.  Every resolver method gets annotated with `@SchemaMapping`, `@QueryMapping`, or `@BatchMapping` (more on that [later](#orgb3fce94)).
+3.  Every resolver method gets annotated with `@SchemaMapping`, `@QueryMapping`, or `@BatchMapping` (more on that [later](#org86a4c05)).
 4.  Use `@QueryMapping` when you can because it's simpler. Use `@SchemaMapping` when you have to (your IDE should nag you).
 5.  If you keep the Java method names in sync with the GraphQL field names, it's a little less code, but don't make a federal case out of it. You can fix it with a `name` parameter in the annotations.
 6.  Unless you do something different (such as adding filtering, sorting, and pagination), you probably will be fetching either a single entry by its primary key, or a list of entries. You *won't* be fetching "child" entries; that's handled by the GraphQL libraries and the recursive divide-and-conquer way they process GraphQL operations. **Note**: This has implications for performance, efficiency, and code complexity.
 7.  The "something different" in the above item refers to richness that you want to add to your GraphQL API. Want `limit` operations? Filter predicates? Aggregations? Supporting those cases will involve more `ArgumentValue<>` parameters, more `SchemaMapping` resolver methods, and more combinations thereof. Deal with it.
-8.  You *will* experience the urge to be clever, to create abstractions that dynamically respond to more and more complex combinations of parameters, filters, and other conditions. Congratulations: you're on your way to building a [general-purpose query engine](#orgd3c4732).
+8.  You *will* experience the urge to be clever, to create abstractions that dynamically respond to more and more complex combinations of parameters, filters, and other conditions. Congratulations: you're on your way to building a [general-purpose query engine](#org531c8dd).
 
 
 ## Step 15:  Upgrade *some* of those resolver/data-fetcher methods with the data loader pattern.

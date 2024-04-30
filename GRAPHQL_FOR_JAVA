@@ -373,7 +373,7 @@ context, discuss the choices involved, and offer some alternatives.
 Again, there are other ways to pull this off, but this is one good
 way.
 
-#+begin_src docker-compose
+#+begin_src yaml
 version: "3.6"
 services:
   postgres:
@@ -404,7 +404,7 @@ that directory, taking care to give them numeric prefixes so that
 they're run by the PostgreSQL initialization script in the proper
 order.
 
-#+begin_src bash :exports both
+#+begin_src shell :exports both
   mkdir -p ./initdb.d-postgres
   wget -O ./initdb.d-postgres/04_chinook_ddl.sql
   wget -O ./initdb.d-postgres/05_chinook_genres_artists_albums.sql
@@ -413,13 +413,13 @@ order.
 
 Now, you can start the database service using Docker Compose.
 
-#+begin_src bash :exports both
+#+begin_src shell :exports both
   docker compose up -d
 #+end_src
 
 or
 
-#+begin_src bash :exports both
+#+begin_src shell :exports both
   docker-compose up -d
 #+end_src
 
@@ -427,7 +427,7 @@ There are many ways to spot check the validity of the database.  If
 the Docker Compose service seems to have started correctly, here's one
 way using ~psql~.
 
-#+begin_src bash :results output :exports both
+#+begin_src shell :results output :exports both
   psql "postgresql://postgres:postgres@localhost:5432/postgres" -c '\d'
 #+end_src
 
