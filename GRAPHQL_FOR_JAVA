@@ -29,8 +29,8 @@ GraphQL is, and as a bonus I'll tell you what GraphQL /really/ is.
 Second, I'll show you how to implement state-of-the-art GraphQL in
 Java for a real application.  Third, I'll offer you an alternative
 path beyond the state-of-the-art that may suit your needs better in
-every dimension.  And, if you feel like skipping to the end, who am I
-to stop you?
+every dimension.  And, if you feel like skipping to [[*How to choose "Buy" over "Buy"][the end]], who am I
+to stop you?  It certainly will save a great deal of effort.
 
 So, what /is/ GraphQL?  Well, GraphQL.org [[https://graphql.org/learn/][says]]
 
@@ -52,7 +52,7 @@ done):
 - expressivity :: A client can say exactly what data they need from a
   server, no more and no less.
 - efficiency :: Expressivity leads to efficiency gains, reducing
-  network chatter wasted bandwidth.
+  network chatter and wasted bandwidth.
 - discoverability :: In order to know what to say to a server, a
   client needs to know what /can/ be said to a server.  That's where
   discoverability comes in, allowing data consumers to know exactly
@@ -96,7 +96,7 @@ JSON and can be boiled down to a few simple features:
 There's more to GraphQL, but that's pretty much the essence.  Note the
 similarities between concepts in GraphQL and in programming languages,
 and especially between concepts in GraphQL and in relational
-databases.  That will be important later.
+databases.  That will be important [[*Is this the /Only/ way to build a GraphQL API server?][later]].
 
 OK, that's enough for now about what GraphQL /is/, but what is GraphQL
 /for/?  Why should we consider GraphQL, especially as an alternative
@@ -106,14 +106,14 @@ another perhaps more concise way to put it is this:
 
 #+begin_quote
 GraphQL's expressivity, efficiency, discoverability, and simplicity
-makes life easier for data consumers.
+make life easier for data consumers.
 #+end_quote
 
 However, there's a corollary:
 
 #+begin_quote
 GraphQL's expressivity, efficiency, discoverability, and simplicity
-makes life harder for data producers.
+make life harder for data producers.
 #+end_quote
 
 That's /you/!  If you're a Java programmer working with GraphQL, your
@@ -152,14 +152,14 @@ there are three important interdependent players in this space:
   the parlance of the [[https://www.thoughtworks.com/radar][ThoughtWorks Radar]] this is unavoidably *Adopt*.
 - Netflix DGS :: [[https://netflix.github.io/dgs/][DGS]] is a higher-level library for working with
   GraphQL in Java /with Spring Boot/, which began in 2021.  If you're
-  using DGS the you /will/ also be using graphql-java under-the-hood,
+  using DGS then you /will/ also be using graphql-java under-the-hood,
   but typically you won't come into contact with graphql-java.
   Instead, you will be sprinkling [[https://en.wikipedia.org/wiki/Java_annotation][annotations]] throughout the Java code
   to identify the code segments (called "resolvers" or "data
-  fetchers"...more on that later) that execute GraphQL requests.
-  Thoughtworks [[https://www.thoughtworks.com/radar/languages-and-frameworks/netflix-dgs][said]] *Trial* as of 2023 but this is a dynamic space and
-  their opinion may have changed.  I say *Hold*, for reasons given
-  below. 
+  fetchers"...more on that [[*Is this the /Only/ way to build a GraphQL API server?][later]]) that execute GraphQL requests.
+  Thoughtworks [[https://www.thoughtworks.com/radar/languages-and-frameworks/netflix-dgs][said]] *Trial* as of 2023 for DGS but this is a dynamic
+  space and their opinion may have changed.  I say *Hold*, for reasons
+  given below.
 - Spring for GraphQL :: [[https://spring.io/projects/spring-graphql][Spring for GraphQL]] is /another/ higher-level
   library for working with GraphQL in Java with Spring Boot, which
   began around 2023, and is also based on annotations.  It may be too
@@ -182,8 +182,8 @@ foundational library for GraphQL in Java, and intends to "win" in this
 space.
 #+end_quote
 
-Moreover, the makers of Netflix DGS much to [[https://netflix.github.io/dgs/spring-graphql-integration/][say]] on the subject of that
-library's relationship to Spring for GraphQL.
+Moreover, the makers of Netflix DGS have much to [[https://netflix.github.io/dgs/spring-graphql-integration/][say]] on the subject of
+that library's relationship to Spring for GraphQL.
 
 #+begin_quote
 Soon after we open-sourced the DGS framework, we learned about
@@ -253,7 +253,7 @@ these features:
   properties of the API.  Many GraphQL API servers in the real world
   are inflexible, are superficial, are shallow, and are in many ways
   "GraphQL-in-name-only."  This guide shows /some/ of what's involved
-  in going beyond the /status quo/ and now that comes into tension
+  in going beyond the /status quo/ and how that comes into tension
   with other properties, like efficiency.  *Spoiler Alert*:  It isn't
   pretty.
 - efficiency :: In fairness, many GraphQL API servers in the real
@@ -273,7 +273,7 @@ these features:
   standard [[https://docs.oracle.com/javaee/6/tutorial/doc/bnbpz.html][JPA]].  Getting an ORM to play nice with GraphQL is a tall
   order, may not be prudent, and may not even be possible.  Few if any
   other guides touch this with a ten-foot-pole.  This guide at least
-  makes an attempt.
+  +makes an attemp+ /will make an attempt with an ORM in the future!/
 
 The recipe I follow in this guide for building a GraphQL API server in
 Java /for a relational database/ is the following:
@@ -281,7 +281,7 @@ Java /for a relational database/ is the following:
 1. Choose [[https://spring.io/projects/spring-boot][Spring Boot]] for the overall server framework.
 2. Choose [[https://spring.io/projects/spring-graphql][Spring for GraphQL]] for the GraphQL-specific parts.
 3. Choose [[https://spring.io/projects/spring-data-jdbc][Spring Data for JDBC]] for data access in lieu of an ORM /for
-   now/.  We can address this later.
+   now/.
 4. Choose [[https://maven.apache.org/][Maven]] over [[https://gradle.org/][Gradle]] because I prefer the former.  If you
    choose the latter, you're on your own.
 5. Choose [[https://www.postgresql.org/][PostgreSQL]] for the database.  Most of the principles should
@@ -342,7 +342,7 @@ Java /for a relational database/ is the following:
 
 That is a /long recipe/ above!  Instead of going into
 chapter-and-verse for every single step, in this guide I do two
-things.  First, I provide a public repository with working code that
+things.  First, I provide a public [[https://github.com/dventimihasura/graphql-with-java][repository]] with working code that
 is easy to use, easy to run, easy to read, and easy to understand.  If
 you feel it falls short in any of these objects /please do let me
 know!/  Second, I highlight /some/ of the important steps, put them in
@@ -384,7 +384,7 @@ that directory, taking care to give them numeric prefixes so that
 they're run by the PostgreSQL initialization script in the proper
 order.
 
-#+begin_src bash
+#+begin_src bash :exports both
   mkdir -p ./initdb.d-postgres
   wget -O ./initdb.d-postgres/04_chinook_ddl.sql
   wget -O ./initdb.d-postgres/05_chinook_genres_artists_albums.sql
@@ -393,13 +393,13 @@ order.
 
 Now, you can start the database service using Docker Compose.
 
-#+begin_src bash
+#+begin_src bash :exports both
   docker compose up -d
 #+end_src
 
 or
 
-#+begin_src bash
+#+begin_src bash :exports both
   docker-compose up -d
 #+end_src
 
@@ -449,7 +449,7 @@ The important things with this form are to make these choices:
 - Spring Boot :: 3.2.5
 - Packaging :: Jar
 - Java :: 21
-- Dependencies
+- Dependencies ::
   - Spring for GraphQL
   - PostgreSQL Driver
 
@@ -710,26 +710,26 @@ understand the code."
 
 Now for the meat of the code.  Aside from niggling details like "How
 do I get a database connection", "How do I map data", etc., the
-patterns I want you to see through the forest of code is this:
+patterns I want you to see through the forest of code are these:
 
 1. Every field in our schema file (~schema.graphqls~) which isn't a
    simple scalar field (e.g., ~Int~, ~String~, ~Boolean~) probably
    will need a resolver/data-fetcher.
 2. Every resolver is implemented with a Java method.
 3. Every resolver method gets annotated with ~@SchemaMapping~,
-   ~@QueryMapping~, or ~@BatchMapping~ (more on that later).
+   ~@QueryMapping~, or ~@BatchMapping~ (more on that [[*Step 15: Upgrade /some/ of those resolver/data-fetcher methods with the data loader pattern.][later]]).
 4. Use ~@QueryMapping~ when you can because it's simpler.  Use
    ~@SchemaMapping~ when you have to (your IDE should nag you).
 5. If you keep the Java method names in sync with the GraphQL field
    names, it's a little less code, but don't make a federal case out
    of it.  You can fix it with a ~name~ parameter in the annotations.
-6. Unless you do something different (more on that later), you
-   probably will be fetching either a single entry by its primary key,
-   or a list of entries.  You /won't/ be fetching "child" entries;
-   that's handled by the GraphQL libraries and the recursive
-   divide-and-conquer way they process GraphQL operations.  *Note*:
-   This has implications for performance, efficiency, and code
-   complexity.
+6. Unless you do something different (such as adding filtering,
+   sorting, and pagination), you probably will be fetching either a
+   single entry by its primary key, or a list of entries.  You /won't/
+   be fetching "child" entries; that's handled by the GraphQL
+   libraries and the recursive divide-and-conquer way they process
+   GraphQL operations.  *Note*: This has implications for performance,
+   efficiency, and code complexity.
 7. The "something different" in the above item refers to richness that
    you want to add to your GraphQL API.  Want ~limit~ operations?
    Filter predicates?  Aggregations?  Supporting those cases will
@@ -738,7 +738,7 @@ patterns I want you to see through the forest of code is this:
 8. You /will/ experience the urge to be clever, to create abstractions
    that dynamically respond to more and more complex combinations of
    parameters, filters, and other conditions.  Congratulations:
-   you're on your way to building a general-purpose query engine.
+   you're on your way to building a [[*Is this the /Only/ way to build a GraphQL API server?][general-purpose query engine]].
 
 ** Step 15:  Upgrade /some/ of those resolver/data-fetcher methods with the data loader pattern.
 
@@ -769,31 +769,31 @@ model.  Suppose we have this GraphQL query.
 3. For each ~Album~, get all of the related ~Track~ entries.
 4. For each entry, just get its identifier field:  ~ArtistId~,
    ~AlbumId~, ~TrackId~.
-5. This query is nested 2 levels below ~Artist~.  Let ~n = 2~.
+5. This query is nested 2 levels below ~Artist~.  Let $~n=2~$.
 6. ~Album~ is a [[https://spec.graphql.org/October2021/#sec-Wrapping-Types][List]] wrapping type on ~Artist~, as is ~Track~ is a
    [[https://spec.graphql.org/October2021/#sec-Wrapping-Types][List]] wrapping type on ~Album~.  Suppose the typical [[https://en.wikipedia.org/wiki/Cardinality][cardinality]] is
-   m.
+   $m$.
 
 How many SQL statements will typically be involved
 
 1. 1 to fetch 10 ~Artist~ entries.
-2. 10*m to fetch the ~Album~ entries.
-3. 10*m^2 to fetch the ~Track~ entries.
+2. $10*m$ to fetch the ~Album~ entries.
+3. $10*m^2$ to fetch the ~Track~ entries.
 
-In general, we can see that the number of queries scales as m^n, which
-is exponential in n.  Of course, observe that the amount of data
-retrieved also scales as m^n (more on that later).  In any case, on
-its face, this /seems/ like an alarmingly inefficient way to go about
-fetching these data.  Is there another way?
+In general, we can see that the number of queries scales as $m^n$,
+which is exponential in $n$.  Of course, observe that the amount of data
+retrieved also scales as $m^n$.  In any case, on its face, this
+/seems/ like an alarmingly inefficient way to go about fetching these
+data.  Is there another way?
 
-There is another way, it it is the standard answer within the GraphQL
-community for combating this N+1 problem:  the data loader pattern
-(aka "batching").  This encompasses two ideas:
+There is another way and it it is the standard answer within the
+GraphQL community for combating this N+1 problem: the data loader
+pattern (aka "batching").  This encompasses two ideas:
 
 1. Rather than fetch the related child entities (e.g. ~Album~) for a
-   /single/ parent entity (e.g. ~Artist~) using one identifier, load
-   fetch the related entities for /all/ of the parent entities in one
-   go, using a list of identifiers.
+   /single/ parent entity (e.g. ~Artist~) using one identifier, fetch
+   the related entities for /all/ of the parent entities in one go,
+   using a list of identifiers.
 2. Group the resulting child entities according to their respective
    parent entities (in code).
 3. While we're at it, we might as well cache the entities for the
@@ -807,7 +807,7 @@ Now, for some code.  Here's how this looks in our example.
 	    albumsForArtist (List<Artist> artists) { // Take in a List of parents rather than a single parent
 	    return
 		jdbcClient
-		.sql("select * from \"Album\" where \"ArtistId\" in (:ids)") // Use a SQL in clause taking a list of identifiers
+		.sql("select * from \"Album\" where \"ArtistId\" in (:ids)") // Use a SQL "in" predicate taking a list of identifiers
 		.param("ids", artists.stream().map(x -> x.ArtistId()).toList()) // Fish the list of identifiers out of the list of parent objects
 		.query(mapper)	// Can re-use our usual mapper
 		.list()
@@ -819,53 +819,56 @@ Now, for some code.  Here's how this looks in our example.
 Like before, let's unpack this.  First, we switch from either the
 ~@QueryMapping~ or ~@SchemaMapping~ annotation to ~@BatchMapping~, to
 signal to Spring for GraphQL that we want to use the data loader
-pattern.  Second, we switch from a single ~Artist artist~ parameter
-to a ~List<Artist> artists~ parameter.  Third, we somehow have to
-arrange the necessary SQL (with an ~in~ predicate in this case) and
-the corresponding parameter (a ~List<Integer>~ extracted from the
+pattern.  Second, we switch from a single ~Artist~ parameter to a
+~List<Artist>~ parameter.  Third, we somehow have to arrange the
+necessary SQL (with an ~in~ predicate in this case) and the
+corresponding parameter (a ~List<Integer>~ extracted from the
 ~List<Album>~ parameter).  Fourth, we have somehow have to arrange for
 the child entries (~Album~ in this case) to get sorted to the right
 parent entries (~Album~ in this case).  There are many ways to do it,
 and this is just one way.  The important point is that however it's
-done, /it has to be done in Java/.  One last thing:  note the absence
-of the ~Integer limit~ parameter.  Where did that go?  It turns out
-that ~InputValue<T>~ is [[https://github.com/spring-projects/spring-graphql/issues/232#issuecomment-1071044083][not supported]] for ~@BatchMapping~.  In this
-case, it's no great loss because arguably these ~Integer limit~
-parameters make little sense.  How often does one really need a random
-subset of an artist's albums?  It's a more serious issue if we had
-filtering and sorting, however.  Filtering and sorting parameters are
-more justified, and if we had them we would somehow have to find a way
-to sneak them into the data loader pattern.  Presumably, it can be
-done, but it will not be so easy as just sticking a ~@BatchMapping~
-annotation onto the method.
+done, /it has to be done in Java/.  One last thing: note the absence
+of the ~limit~ parameter.  Where did that go?  It turns out that
+~InputValue<T>~ is [[https://github.com/spring-projects/spring-graphql/issues/232#issuecomment-1071044083][not supported]] by Spring for GraphQL for
+~@BatchMapping~.  Oh well! 😒 In this case, it's no great loss because
+arguably these ~limit~ parameters make little sense.  How often does
+one really need a random subset of an artist's albums?  It's a more
+serious issue if we had filtering and sorting, however.  Filtering and
+sorting parameters are more justified, and if we had them we would
+somehow have to find a way to sneak them into the data loader pattern.
+Presumably, it can be done, but it will not be so easy as just
+slapping a ~@BatchMapping~ annotation onto the method and tinkering
+with [[https://www.oracle.com/technical-resources/articles/java/ma14-java-se-8-streams.html][Java streams]].
 
-#+begin_comment
-This raises an important point about the "N+1 problem" that is never
-addressed, and serves to exaggerate the scale of the problem in a real
-world setting.  /If/ we have limits and/or filtering, then we have a
-way of reducing the cardinality of related child entities below m
-(recall that we took m to be the typical cardinality of a child
-entity).  In a real world setting /limits or more precisely filtering
-are necessary for usability/.  GraphQL APIs are meant for humans, in
-that at the end of the data, the data are being painted onto a screen
-or in some other way presented to a human user who then has to absorb
-and process those data.  Humans have severe limits in perception,
-cognition, and memory, for the quantity of data we can process.  Only
-another machine (i.e. computers) could possibly process a large volume
-of data, but if you're extracting large volumes of data from one
-machine to another, then you are building an [[https://en.wikipedia.org/wiki/Extract,_transform,_load][ETL]] pipeline.  If you are
-using GraphQL for then /you are doing it wrong/ and should stop
-immediately.
+*** Editorial Aside!
 
-In any event, in a real world setting, with human users, both m and n
-will be very small.  The number of SQL queries /will not/ scale as m^n
-to very large numbers.  Effectively, the N+1 problem will inflate the
-number of SQL queries not by an arbitrarily large factor, but by a
-constant factor.  In a well-designed application, it probably will be
-a constant factor well below 100.  Consider this when balancing the
-trade-offs in developer time, in complexity, and in hardware scaling,
-when confronting the N+1 problem.
-#+end_comment
+#+begin_quote
+This raises an important point about the "N+1 problem" that is /never/
+addressed, and that neglect just serves to exaggerate the scale of the
+problem in a real world setting.  /If/ we have limits and/or
+filtering, then we have a way of reducing the cardinality of related
+child entities below $m$ (recall that we took $m$ to be the typical
+cardinality of a child entity).  In a real world setting /limits or
+more precisely filtering are necessary for usability/.  GraphQL APIs
+are meant for humans, in that at the end of the day, the data are
+being painted onto a screen or in some other way presented to a human
+user who then has to absorb and process those data.  Humans have
+severe limits in perception, cognition, and memory, for the quantity
+of data we can process.  Only another machine (i.e. computers) could
+possibly process a large volume of data, but if you're extracting
+large volumes of data from one machine to another, then you are
+building an [[https://en.wikipedia.org/wiki/Extract,_transform,_load][ETL]] pipeline.  If you are using GraphQL for ETL then /you
+are doing it wrong/ and should stop immediately!
+
+In any event, in a real world setting, with human users, both $m$ and
+$n$ will be very small.  The number of SQL queries /will not/ scale as
+$m^n$ to very large numbers.  Effectively, the N+1 problem will
+inflate the number of SQL queries not by an /arbitrarily large
+factor/, but by approximately a /constant factor/.  In a well-designed
+application, it probably will be a constant factor well below 100.
+Consider this when balancing the trade-offs in developer time, in
+complexity, and in hardware scaling, when confronting the N+1 problem.
+#+end_quote
 
 * Is this the /Only/ way to build a GraphQL API server?
 
@@ -874,7 +877,7 @@ typically offered in tutorials and "Getting Started" guides, and is
 over tiny unrealistic in-memory data models, without a database.
 
 We saw that the "real way" of building GraphQL servers (in Java)
-described in some detail above, regardless of library or frame work,
+described in some detail above, regardless of library or framework,
 involves:
 
 - writing schema file entries, possibly for every table
@@ -913,45 +916,50 @@ API, as it's a natural evolution from the trivial "easy way" of
 tutorials and "Getting Started" guides, and from the cumbersome "real
 way" of resolvers and even data loaders.
 
-Building a GraphQL server with a network of nested resolvers
-offers some flexibility and dynamism, and requires a lot of code.  Adding
-in more flexibility and dynamism with limits, pagination, filtering,
-and sorting, requires more code still. And while it may be dynamic, it
+Building a GraphQL server with a network of nested resolvers offers
+some flexibility and dynamism, and requires a lot of code.  Adding in
+more flexibility and dynamism with limits, pagination, filtering, and
+sorting, requires more code still. And while it may be dynamic, it
 will also be very chatty with the database, as we saw.  Reducing the
 chattiness necessitates composing the many fragmentary SQL statements
 into fewer SQL statements which individually do more work.  That's
-what the data loader pattern does:  it reduces the number of SQL
+what the data loader pattern does: it reduces the number of SQL
 statements from "a few tens" to "less than 10 but more than 1".  In
 practice, that may not be a huge win and it comes at the cost of
 developer time and lost dynamism, but it /is/ a step down the path of
-generating fewer, more sophisticated queries.  The terminus of
-that path is "1":  the optimal number of SQL statements (ignoring
-caching) is 1.  Generate one giant SQL statement that does /all/ the
-work of fetching the data, teach it to generate JSON while you're at
-it, and this is the best you will ever do with a GraphQL server (for a
+generating fewer, more sophisticated queries.  The terminus of that
+path is "1": the optimal number of SQL statements (ignoring caching)
+is 1.  Generate one giant SQL statement that does /all/ the work of
+fetching the data, teach it to generate JSON while you're at it, and
+this is the best you will ever do with a GraphQL server (for a
 relational database).  It will be hard work, but you can take solace
-that having done it once, it need not ever be done if you do it right,
-by introspecting the database to /generate/ the schema.
+that having done it once, it need not ever be done again if you do it
+right, by introspecting the database to /generate/ the schema.
 
 Do /that/, and what you will build won't be so much a "GraphQL API
 server" as a "GraphQL to SQL compiler."  If that gives you pause,
 consider that this is what you were already doing all along, anyway.
 +The easy way+, the real way, the natural way:  they're +all+ both
-necessarily GraphQL to SQL compilers.  They just lie along a spectrum
+necessarily GraphQL to SQL compilers!  They just lie along a spectrum
 of versatility, flexibility, and efficiency.  Acknowledge that
 building a GraphQL to SQL compiler is what you were doing all along,
 embrace that fact, and lean into it, and you may never need to build
 another GraphQL server again.  What could be better than that?
 
 One thing that could be better than building your last GraphQL server,
-or your only GraphQL server, is never building a GraphQL server at
-all.  After all, your goal wasn't to /build/ a GraphQL API, but rather
-to /have/ a GraphQL API.  The easiest way to /have/ a GraphQL API is
-just to go get one.  Get one for free if you can.  Buy one if the
-needs justify it.  This is the [[https://en.wikipedia.org/wiki/Boss_(video_games)#Final_boss][final boss]] on the journey of GraphQL
-maturity.
+or your only GraphQL server, is never building a GraphQL server in the
+first place.  After all, your goal wasn't to /build/ a GraphQL API,
+but rather to /have/ a GraphQL API.  The easiest way to /have/ a
+GraphQL API is just to go get one.  Get one for free if you can.  Buy
+one if the needs justify it.  This is the [[https://en.wikipedia.org/wiki/Boss_(video_games)#Final_boss][final boss]] on the journey of
+GraphQL maturity.
 
 * How to choose "Buy" over "Buy"
+
+#+begin_quote
+/stuff about why Hasura is so much better/
+#+end_quote
+
 
 #  LocalWords:  runtime Initializr QueryMapping YugaByte InvoiceLine
 #  LocalWords:  MediaType PlaylistTrack ArtistById AlbumById AlbumId
