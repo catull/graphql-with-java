@@ -17,6 +17,26 @@
 #+creator: Emacs 29.3 (Org mode 9.6.15)
 #+cite_export:
 
+#+begin_quote
+GraphQL is an innovative Application Performance Interface (API) that
+offers improvements in expressivity, efficiency, discoverability, and
+simplicity. This blog provides a comprehensive guide to implementing
+state-of-the-art GraphQL in Java for real-world applications. It
+covers the fundamental concepts of GraphQL, including its query
+language and data model, and highlights its similarities to
+programming languages and relational databases. The blog also offers a
+practical step-by-step recipe for building a GraphQL API server in
+Java, utilizing Spring Boot, Spring for GraphQL, and a relational
+database. It emphasizes the importance of persistence, flexibility,
+efficiency, and modernity in the design. Additionally, the blog
+discusses the trade-offs and challenges involved in the
+process. Finally, it presents an alternative path beyond the
+conventional approach, suggesting the potential benefits of a "GraphQL
+to SQL compiler" and exploring the option of acquiring a GraphQL API
+instead of building one. This guide is a valuable resource for Java
+developers seeking to create robust and efficient GraphQL API servers.
+#+end_quote
+
 * What is GraphQL and why do people want it?
 
 GraphQL is an important evolution in the design of Application
