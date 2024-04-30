@@ -1,9 +1,26 @@
+- [What is GraphQL and why do people want it?](#org45a9715)
+- [How do I provide the GraphQL that people want, especially as a Java developer?](#org08f9d3f)
+- [How exactly do I build a GraphQL API server in Java for a real application?](#orgdd16f1a)
+- [No, but really, how exactly do I build a GraphQL API server in Java for a real application?](#org241f78b)
+  - [Step 6:  Choose [Docker Compose](https://docs.docker.com/compose/) for orchestrating a development database server.](#org3f985ce)
+  - [Step 7:  Choose the [Chinook](https://www.yugabyte.com/blog/postgresql-how-to-installing-the-chinook-sample-db-on-a-distributed-sql-database/) data model.](#org82d2d4d)
+  - [Step 8:  Choose the [Spring Initializr](https://start.spring.io/) for bootstrapping the application.](#org29b6d72)
+  - [Step 9: [Create](https://netflix.github.io/dgs/#creating-a-schema) a GraphQL schema file.](#orga529f7b)
+  - [Step 10:  Write Java model classes.](#org5c58ad1)
+  - [Step 11-14:  Write Java controller classes.  Annotate every controller.  Annotate every resolver/data-fetcher.  Implement those resolver/data-fetcher.](#org77dbf60)
+  - [Step 15:  Upgrade *some* of those resolver/data-fetcher methods with the data loader pattern.](#org03ba7d9)
+    - [Editorial Aside!](#org58fbdd6)
+- [Is this the *Only* way to build a GraphQL API server?](#orga1e4553)
+- [How to choose "Buy" over "Buy"](#org33c57ad)
+
 > GraphQL is an innovative Application Performance Interface (API) that offers improvements in expressivity, efficiency, discoverability, and simplicity. This blog provides a comprehensive guide to implementing state-of-the-art GraphQL in Java for real-world applications. It covers the fundamental concepts of GraphQL, including its query language and data model, and highlights its similarities to programming languages and relational databases. The blog also offers a practical step-by-step recipe for building a GraphQL API server in Java, utilizing Spring Boot, Spring for GraphQL, and a relational database. It emphasizes the importance of persistence, flexibility, efficiency, and modernity in the design. Additionally, the blog discusses the trade-offs and challenges involved in the process. Finally, it presents an alternative path beyond the conventional approach, suggesting the potential benefits of a "GraphQL to SQL compiler" and exploring the option of acquiring a GraphQL API instead of building one. This guide is a valuable resource for Java developers seeking to create robust and efficient GraphQL API servers.
 
 
+<a id="org45a9715"></a>
+
 # What is GraphQL and why do people want it?
 
-GraphQL is an important evolution in the design of Application Performance Interfaces (API), but even today it can be difficult to know how to get started with GraphQL, how to move beyond "Getting Started" with GraphQL, and how to move beyond the conventional wisdom on GraphQL. This is especially true for Java. This guide attempts to cover all these bases in three steps. First, I'll tell you what GraphQL is, and as a bonus I'll tell you what GraphQL *really* is. Second, I'll show you how to implement state-of-the-art GraphQL in Java for a real application. Third, I'll offer you an alternative path beyond the state-of-the-art that may suit your needs better in every dimension. And, if you feel like skipping to [the end](#org153c47e), who am I to stop you? It certainly will save a great deal of effort.
+GraphQL is an important evolution in the design of Application Performance Interfaces (API), but even today it can be difficult to know how to get started with GraphQL, how to move beyond "Getting Started" with GraphQL, and how to move beyond the conventional wisdom on GraphQL. This is especially true for Java. This guide attempts to cover all these bases in three steps. First, I'll tell you what GraphQL is, and as a bonus I'll tell you what GraphQL *really* is. Second, I'll show you how to implement state-of-the-art GraphQL in Java for a real application. Third, I'll offer you an alternative path beyond the state-of-the-art that may suit your needs better in every dimension. And, if you feel like skipping to [the end](#org33c57ad), who am I to stop you? It certainly will save a great deal of effort.
 
 So, what *is* GraphQL? Well, GraphQL.org [says](https://graphql.org/learn/)
 
@@ -26,7 +43,7 @@ But, what *else* is GraphQL. What *really* is GraphQL? GraphQL is *also* a data 
 -   **types:** A [type](https://spec.graphql.org/October2021/#sec-Types) is a simple value (a [scalar](https://spec.graphql.org/October2021/#sec-Scalars)) or a set of fields (an [object](https://spec.graphql.org/October2021/#sec-Objects)). While you naturally introduce new types for your own problem domain, there are few special types (called [Operations](https://spec.graphql.org/October2021/#sec-Language.Operations)). One of theses is [Query](https://spec.graphql.org/October2021/#sec-Query), which is the root of requests for data (setting aside [Subscription](https://spec.graphql.org/October2021/#sec-Subscription) for now, for the sake of simplicity). A type essentially is a set of rules for determining if a piece of data&#x2013;or a request for that piece of data&#x2013;validly conforms to the given type. A GraphQL type is very much like a user-defined type in programming languages like C++, Java, and Typescript, and is very much like a table in a relational database.
 -   **field:** A field within *one* type contains one or more pieces of data that validly conform to *another* type, thus establishing *relationships* among types. A GraphQL field is very much like a property of a user-defined type in a programming language, and is very much like a column in a relational database. Relationships between GraphQL types are very much like pointers or references in programming languages, and are very much like foreign key constraints in relational databases.
 
-There's more to GraphQL, but that's pretty much the essence. Note the similarities between concepts in GraphQL and in programming languages, and especially between concepts in GraphQL and in relational databases. That will be important [later](#org531c8dd).
+There's more to GraphQL, but that's pretty much the essence. Note the similarities between concepts in GraphQL and in programming languages, and especially between concepts in GraphQL and in relational databases. That will be important [later](#orga1e4553).
 
 OK, that's enough for now about what GraphQL *is*, but what is GraphQL *for*? Why should we consider GraphQL, especially as an alternative to REST? I listed above some of GraphQL's improvements over typical REST&#x2013;expressivity, efficiency, discoverability, simplicity&#x2013;but another perhaps more concise way to put it is this:
 
@@ -39,6 +56,8 @@ However, there's a corollary:
 That's *you*! If you're a Java programmer working with GraphQL, your job is probably to *produce* GraphQL API servers for clients to *consume* (there are relatively few&#x2013;not "none", but "few"&#x2013;settings for Java on the client). Offering all that expressivity, discoverability, etc. ain't easy, so how do you do it?
 
 
+<a id="org08f9d3f"></a>
+
 # How do I provide the GraphQL that people want, especially as a Java developer?
 
 On the journey to providing a GraphQL API we confront a series interdependent choices, which *can* make life easier (or harder) for data producers. One choice is over just *how* "expressive, efficient, discoverable, and simple" is our API, but let's set that aside for a moment and treat that as an emergent property of the other choices we make. Life is about trade-offs, after all.
@@ -48,7 +67,7 @@ Another choice is over [build-versus-buy [PDF]​](https://www.thoughtworks.com/
 If we're building a GraphQL API server in Java, another choice is over whether to build it completely from scratch or to use libraries and frameworks, and if the latter then which libraries and frameworks to use. Let's set *that* aside, rightfully regard a complete [DIY](https://en.wikipedia.org/wiki/Do_it_yourself) solution as pointless masochism, and survey the landscape of Java libraries and frameworks for GraphQL. As of writing (April 2024) there are three important interdependent players in this space:
 
 -   **graphql-java:** [graphql-java](https://www.graphql-java.com/) is a lower-level foundational library for working with GraphQL in Java, which began in 2015. Since the other players depend on and use graphql-java, consider graphql-java to be *non-optional*. Another crucial choice is whether you are or are not using the [Spring Boot](https://spring.io/projects/spring-boot) framework. If you're *not* using Spring Boot then *stop here!* 🛑 Since this is a prerequisite, in the parlance of the [ThoughtWorks Radar](https://www.thoughtworks.com/radar) this is unavoidably **Adopt**.
--   **Netflix DGS:** [DGS](https://netflix.github.io/dgs/) is a higher-level library for working with GraphQL in Java *with Spring Boot*, which began in 2021. If you're using DGS then you *will* also be using graphql-java under-the-hood, but typically you won't come into contact with graphql-java. Instead, you will be sprinkling [annotations](https://en.wikipedia.org/wiki/Java_annotation) throughout the Java code to identify the code segments (called "resolvers" or "data fetchers"&#x2026;more on that [later](#org531c8dd)) that execute GraphQL requests. Thoughtworks [said](https://www.thoughtworks.com/radar/languages-and-frameworks/netflix-dgs) **Trial** as of 2023 for DGS but this is a dynamic space and their opinion may have changed. I say **Hold**, for reasons given below.
+-   **Netflix DGS:** [DGS](https://netflix.github.io/dgs/) is a higher-level library for working with GraphQL in Java *with Spring Boot*, which began in 2021. If you're using DGS then you *will* also be using graphql-java under-the-hood, but typically you won't come into contact with graphql-java. Instead, you will be sprinkling [annotations](https://en.wikipedia.org/wiki/Java_annotation) throughout the Java code to identify the code segments (called "resolvers" or "data fetchers"&#x2026;more on that [later](#orga1e4553)) that execute GraphQL requests. Thoughtworks [said](https://www.thoughtworks.com/radar/languages-and-frameworks/netflix-dgs) **Trial** as of 2023 for DGS but this is a dynamic space and their opinion may have changed. I say **Hold**, for reasons given below.
 -   **Spring for GraphQL:** [Spring for GraphQL](https://spring.io/projects/spring-graphql) is *another* higher-level library for working with GraphQL in Java with Spring Boot, which began around 2023, and is also based on annotations. It may be too new for ThoughtWorks, but it's not too new for me. I say **adopt**, and read on for why.
 
 The makers of Spring for GraphQL [say](https://spring.io/projects/spring-graphql):
@@ -77,6 +96,8 @@ Translation:
 
 In this guide I've told you what GraphQL *is*. I've told you what GraphQL *really* is. I've set the stage by giving some background on the relevant libraries and frameworks in Java. Now, let me show you how to implement state-of-the-art GraphQL in Java for a real application, and since we're starting afresh we'll take the advice from DGS and just use Spring for GraphQL.
 
+
+<a id="orgdd16f1a"></a>
 
 # How exactly do I build a GraphQL API server in Java for a real application?
 
@@ -109,10 +130,14 @@ The recipe I follow in this guide for building a GraphQL API server in Java *for
 18. Just use a [fuzz-tester](https://github.com/EMResearch/EvoMaster) on the API and call it a day.
 
 
+<a id="org241f78b"></a>
+
 # No, but really, how exactly do I build a GraphQL API server in Java for a real application?
 
 That is a *long recipe* above! Instead of going into chapter-and-verse for every single step, in this guide I do two things. First, I provide a public [repository](https://github.com/dventimihasura/graphql-with-java) with working code that is easy to use, easy to run, easy to read, and easy to understand. If you feel it falls short in any of these objects *please do let me know!* Second, I highlight *some* of the important steps, put them in context, discuss the choices involved, and offer some alternatives.
 
+
+<a id="org3f985ce"></a>
 
 ## Step 6:  Choose [Docker Compose](https://docs.docker.com/compose/) for orchestrating a development database server.
 
@@ -139,6 +164,8 @@ Set an environment variable for `PGPORT` to expose PostgreSQL on a host port, or
 
 Start the server with:
 
+
+<a id="org82d2d4d"></a>
 
 ## Step 7:  Choose the [Chinook](https://www.yugabyte.com/blog/postgresql-how-to-installing-the-chinook-sample-db-on-a-distributed-sql-database/) data model.
 
@@ -197,6 +224,8 @@ psql "postgresql://postgres:postgres@localhost:5432/postgres" -c '\d'
 You should at least see Chinook-specific tables like `Album`, `Artist`, and `Track`.
 
 
+<a id="org29b6d72"></a>
+
 ## Step 8:  Choose the [Spring Initializr](https://start.spring.io/) for bootstrapping the application.
 
 The important things with this form are to make these choices:
@@ -211,6 +240,8 @@ The important things with this form are to make these choices:
 
 You can make other choices (e.g. Gradle, Java 22, MySQL, etc.) but bear in mind that this guide has only been tested with the choices above.
 
+
+<a id="orga529f7b"></a>
 
 ## Step 9: [Create](https://netflix.github.io/dgs/#creating-a-schema) a GraphQL schema file.
 
@@ -286,6 +317,8 @@ type Customer {
 Fill out the rest of the `schema.graphqls` file as you see fit, exposing whatever table (and possibly views, if you create them) you like. Or, just use the complete version from the shared repository.
 
 
+<a id="org5c58ad1"></a>
+
 ## Step 10:  Write Java model classes.
 
 Within the standard Maven directory layout, Java source code goes into `./src/main/java` and its sub-directories. Within an appropriate sub-directory for whatever Java package you use, create Java model classes. These can be Plain Old Java Objects ([POJOs](https://en.wikipedia.org/wiki/Plain_old_Java_object)). They can be Java [Record](https://docs.oracle.com/en/java/javase/17/language/records.html) classes. They can be whatever you like, so long as they have "getter" and "setter" property methods for the corresponding fields in the GraphQL schema. In this guide's repository, I choose Java Record classes just for the minimal amount of boilerplate.
@@ -330,6 +363,8 @@ Within the standard Maven directory layout, Java source code goes into `./src/ma
 }
 ```
 
+
+<a id="org77dbf60"></a>
 
 ## Step 11-14:  Write Java controller classes.  Annotate every controller.  Annotate every resolver/data-fetcher.  Implement those resolver/data-fetcher.
 
@@ -411,13 +446,15 @@ Now for the meat of the code. Aside from niggling details like "How do I get a d
 
 1.  Every field in our schema file (`schema.graphqls`) which isn't a simple scalar field (e.g., `Int`, `String`, `Boolean`) probably will need a resolver/data-fetcher.
 2.  Every resolver is implemented with a Java method.
-3.  Every resolver method gets annotated with `@SchemaMapping`, `@QueryMapping`, or `@BatchMapping` (more on that [later](#org86a4c05)).
+3.  Every resolver method gets annotated with `@SchemaMapping`, `@QueryMapping`, or `@BatchMapping` (more on that [later](#org03ba7d9)).
 4.  Use `@QueryMapping` when you can because it's simpler. Use `@SchemaMapping` when you have to (your IDE should nag you).
 5.  If you keep the Java method names in sync with the GraphQL field names, it's a little less code, but don't make a federal case out of it. You can fix it with a `name` parameter in the annotations.
 6.  Unless you do something different (such as adding filtering, sorting, and pagination), you probably will be fetching either a single entry by its primary key, or a list of entries. You *won't* be fetching "child" entries; that's handled by the GraphQL libraries and the recursive divide-and-conquer way they process GraphQL operations. **Note**: This has implications for performance, efficiency, and code complexity.
 7.  The "something different" in the above item refers to richness that you want to add to your GraphQL API. Want `limit` operations? Filter predicates? Aggregations? Supporting those cases will involve more `ArgumentValue<>` parameters, more `SchemaMapping` resolver methods, and more combinations thereof. Deal with it.
-8.  You *will* experience the urge to be clever, to create abstractions that dynamically respond to more and more complex combinations of parameters, filters, and other conditions. Congratulations: you're on your way to building a [general-purpose query engine](#org531c8dd).
+8.  You *will* experience the urge to be clever, to create abstractions that dynamically respond to more and more complex combinations of parameters, filters, and other conditions. Congratulations: you're on your way to building a [general-purpose query engine](#orga1e4553).
 
+
+<a id="org03ba7d9"></a>
 
 ## Step 15:  Upgrade *some* of those resolver/data-fetcher methods with the data loader pattern.
 
@@ -479,12 +516,16 @@ Now, for some code. Here's how this looks in our example.
 Like before, let's unpack this. First, we switch from either the `@QueryMapping` or `@SchemaMapping` annotation to `@BatchMapping`, to signal to Spring for GraphQL that we want to use the data loader pattern. Second, we switch from a single `Artist` parameter to a `List<Artist>` parameter. Third, we somehow have to arrange the necessary SQL (with an `in` predicate in this case) and the corresponding parameter (a `List<Integer>` extracted from the `List<Album>` parameter). Fourth, we have somehow have to arrange for the child entries (`Album` in this case) to get sorted to the right parent entries (`Album` in this case). There are many ways to do it, and this is just one way. The important point is that however it's done, *it has to be done in Java*. One last thing: note the absence of the `limit` parameter. Where did that go? It turns out that `InputValue<T>` is [not supported](https://github.com/spring-projects/spring-graphql/issues/232#issuecomment-1071044083) by Spring for GraphQL for `@BatchMapping`. Oh well! 😒 In this case, it's no great loss because arguably these `limit` parameters make little sense. How often does one really need a random subset of an artist's albums? It's a more serious issue if we had filtering and sorting, however. Filtering and sorting parameters are more justified, and if we had them we would somehow have to find a way to sneak them into the data loader pattern. Presumably, it can be done, but it will not be so easy as just slapping a `@BatchMapping` annotation onto the method and tinkering with [Java streams](https://www.oracle.com/technical-resources/articles/java/ma14-java-se-8-streams.html).
 
 
+<a id="org58fbdd6"></a>
+
 ### Editorial Aside!
 
 > This raises an important point about the "N+1 problem" that is *never* addressed, and that neglect just serves to exaggerate the scale of the problem in a real world setting. *If* we have limits and/or filtering, then we have a way of reducing the cardinality of related child entities below $m$ (recall that we took $m$ to be the typical cardinality of a child entity). In a real world setting *limits or more precisely filtering are necessary for usability*. GraphQL APIs are meant for humans, in that at the end of the day, the data are being painted onto a screen or in some other way presented to a human user who then has to absorb and process those data. Humans have severe limits in perception, cognition, and memory, for the quantity of data we can process. Only another machine (i.e. computers) could possibly process a large volume of data, but if you're extracting large volumes of data from one machine to another, then you are building an [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) pipeline. If you are using GraphQL for ETL then *you are doing it wrong* and should stop immediately!
 > 
 > In any event, in a real world setting, with human users, both $m$ and $n$ will be very small. The number of SQL queries *will not* scale as $m^n$ to very large numbers. Effectively, the N+1 problem will inflate the number of SQL queries not by an *arbitrarily large factor*, but by approximately a *constant factor*. In a well-designed application, it probably will be a constant factor well below 100. Consider this when balancing the trade-offs in developer time, in complexity, and in hardware scaling, when confronting the N+1 problem.
 
+
+<a id="orga1e4553"></a>
 
 # Is this the *Only* way to build a GraphQL API server?
 
@@ -515,6 +556,8 @@ Do *that*, and what you will build won't be so much a "GraphQL API server" as a 
 
 One thing that could be better than building your last GraphQL server, or your only GraphQL server, is never building a GraphQL server in the first place. After all, your goal wasn't to *build* a GraphQL API, but rather to *have* a GraphQL API. The easiest way to *have* a GraphQL API is just to go get one. Get one for free if you can. Buy one if the needs justify it. This is the [final boss](https://en.wikipedia.org/wiki/Boss_(video_games)#Final_boss) on the journey of GraphQL maturity.
 
+
+<a id="org33c57ad"></a>
 
 # How to choose "Buy" over "Buy"
 
