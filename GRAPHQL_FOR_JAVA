@@ -180,7 +180,7 @@ there are three important interdependent players in this space:
   but typically you won't come into contact with graphql-java.
   Instead, you will be sprinkling [[https://en.wikipedia.org/wiki/Java_annotation][annotations]] throughout the Java code
   to identify the code segments (called "resolvers" or "data
-  fetchers"...more on that [[*Is this the /Only/ way to build a GraphQL API server?][later]]) that execute GraphQL requests.
+  fetchers"...more on that [[the end][later]]) that execute GraphQL requests.
   Thoughtworks [[https://www.thoughtworks.com/radar/languages-and-frameworks/netflix-dgs][said]] *Trial* as of 2023 for DGS but this is a dynamic
   space and their opinion may have changed.  I say *Hold*, for reasons
   given below.
@@ -410,10 +410,12 @@ order.
 
 #+begin_src shell :exports both
   mkdir -p ./initdb.d-postgres
-  wget -O ./initdb.d-postgres/04_chinook_ddl.sql
-  wget -O ./initdb.d-postgres/05_chinook_genres_artists_albums.sql
-  wget -O ./initdb.d-postgres/06_chinook_songs.sql
+  wget -O ./initdb.d-postgres/04_chinook_ddl.sql https://raw.githubusercontent.com/YugaByte/yugabyte-db/master/sample/chinook_ddl.sql
+  wget -O ./initdb.d-postgres/05_chinook_genres_artists_albums.sql https://raw.githubusercontent.com/YugaByte/yugabyte-db/master/sample/chinook_genres_artists_albums.sql
+  wget -O ./initdb.d-postgres/06_chinook_songs.sql https://raw.githubusercontent.com/YugaByte/yugabyte-db/master/sample/chinook_songs.sql
 #+end_src
+
+#+RESULTS:
 
 Now, you can start the database service using Docker Compose.
 

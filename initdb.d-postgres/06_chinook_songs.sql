@@ -1,6 +1,4 @@
 
--- \c chinook
-
 /*******************************************************************************
    Chinook Database - Version 1.4
    Script: Chinook_PostgreSql.sql
