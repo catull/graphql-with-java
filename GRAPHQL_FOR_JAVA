@@ -372,7 +372,7 @@ you feel it falls short in any of these objects /please do let me
 know!/  Second, I highlight /some/ of the important steps, put them in
 context, discuss the choices involved, and offer some alternatives.
 
-** Step 6:  Choose [[https://docs.docker.com/compose/][Docker Compose]] for orchestrating a development database server.
+** Step 6:  Choose Docker Compose for orchestrating a development database server.
 
 Again, there are other ways to pull this off, but this is one good
 way.
@@ -399,7 +399,7 @@ host port, or hard-code it to whatever value you like.
 
 Start the server with:
 
-** Step 7:  Choose the [[https://www.yugabyte.com/blog/postgresql-how-to-installing-the-chinook-sample-db-on-a-distributed-sql-database/][Chinook]] data model.
+** Step 7:  Choose the Chinook data model.
 
 The Chinook files from [[https://www.yugabyte.com/blog/postgresql-how-to-installing-the-chinook-sample-db-on-a-distributed-sql-database/][YugaByte]] work out-of-the-box for PostgreSQL and
 are a good choice.  Just make sure that there is a sub-directory
@@ -466,9 +466,9 @@ way using ~psql~.
 You should at least see Chinook-specific tables like ~Album~,
 ~Artist~, and ~Track~.
 
-** Step 8:  Choose the [[https://start.spring.io/][Spring Initializr]] for bootstrapping the application.
+** Step 8:  Choose the Spring Initializr for bootstrapping the application.
 
-The important things with this form are to make these choices:
+The important things with the [[https://start.spring.io/][Spring Initializr]] are to make these choices:
 
 - Project :: Maven
 - Language :: Java
@@ -483,7 +483,7 @@ You can make other choices (e.g. Gradle, Java 22, MySQL, etc.) but
 bear in mind that this guide has only been tested with the choices
 above.
 
-** Step 9: [[https://netflix.github.io/dgs/#creating-a-schema][Create]] a GraphQL schema file.
+** Step 9: Create a GraphQL schema file.
 
 Maven projects have a standard directory layout, and a standard place
 within that layout for resource files to be packaged into the build
