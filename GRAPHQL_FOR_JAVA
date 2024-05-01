@@ -119,7 +119,7 @@ JSON and can be boiled down to a few simple features:
 There's more to GraphQL, but that's pretty much the essence.  Note the
 similarities between concepts in GraphQL and in programming languages,
 and especially between concepts in GraphQL and in relational
-databases.  That will be important [[*Is this the /Only/ way to build a GraphQL API server?][later]].
+databases.
 
 OK, that's enough for now about what GraphQL /is/, but what is GraphQL
 /for/?  Why should we consider GraphQL, especially as an alternative
@@ -1042,8 +1042,8 @@ sources, including but not limited to:
 Hasura is a good option, but it's not the only option for "buy."  Even
 "build" via a DIY approach still is an option, in Java as it is in
 other programming languages.  If you do choose to build GraphQL
-servers with Java, I hope you will find this article, and especially
-the section [[*Step 15: Upgrade /some/ of those resolver/data-fetcher methods with the data loader pattern.][above]] helpful in breaking out of the relentless tutorials,
+servers with Java, I hope you will find this article--and especially
+the section [[*Step 15: Upgrade /some/ of those resolver/data-fetcher methods with the data loader pattern.][above]]--helpful in breaking out of the relentless tutorials,
 "Getting Started" guides, and "To-Do" apps.  These are vast topics in
 a shifting landscape, which warrant an iterative approach, as well as
 a modest amount of repetition.  We at Hasura will continue to repeat
