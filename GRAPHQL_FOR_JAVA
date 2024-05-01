@@ -7,7 +7,8 @@
 #+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:nil
 #+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+options: timestamp:nil title:t toc:t todo:t |:t
-#+title: The Ultimate GraphQL for Java Guide
+#+title: GraphQL and Java
+#+subtitle: Everything You Wanted to Know But Were Afraid To Ask
 #+date: <2024-04-30 Tue>
 #+author: David A. Ventimiglia
 #+email: davidaventimiglia@hasura.io
@@ -49,7 +50,7 @@ GraphQL is, and as a bonus I'll tell you what GraphQL /really/ is.
 Second, I'll show you how to implement state-of-the-art GraphQL in
 Java for a real application.  Third, I'll offer you an alternative
 path beyond the state-of-the-art that may suit your needs better in
-every dimension.  And, if you feel like skipping to [[*How to choose "Buy" over "Buy"][the end]], who am I
+every dimension.  And, if you feel like skipping to [[the end][the end]], who am I
 to stop you?  It certainly will save a great deal of effort.
 
 So, what /is/ GraphQL?  Well, GraphQL.org [[https://graphql.org/learn/][says]]
@@ -811,7 +812,7 @@ data.  Is there another way?
 
 There is another way and it it is the standard answer within the
 GraphQL community for combating this N+1 problem: the data loader
-pattern (aka "batching").  This encompasses two ideas:
+pattern (aka "batching").  This encompasses three ideas:
 
 1. Rather than fetch the related child entities (e.g. ~Album~) for a
    /single/ parent entity (e.g. ~Artist~) using one identifier, fetch
@@ -893,7 +894,7 @@ Consider this when balancing the trade-offs in developer time, in
 complexity, and in hardware scaling, when confronting the N+1 problem.
 #+end_quote
 
-* Is this the /Only/ way to build a GraphQL API server?
+* Is this the /Only/ way to build a GraphQL API server?<<the end>>
 
 We saw that the "easy way" of building GraphQL servers is the one
 typically offered in tutorials and "Getting Started" guides, and is
@@ -1051,6 +1052,8 @@ and refine these ideas--and the details within--as a leader in the
 GraphQL community.  As we do we welcome input from and collaboration
 with the community.  Feedback is always welcome, so if there are ways
 that this guide can be improved please do let us know.
+
+* FAQ
 
 * About Me
 
