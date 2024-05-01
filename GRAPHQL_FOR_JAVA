@@ -296,7 +296,7 @@ these features:
   standard [[https://docs.oracle.com/javaee/6/tutorial/doc/bnbpz.html][JPA]].  Getting an ORM to play nice with GraphQL is a tall
   order, may not be prudent, and may not even be possible.  Few if any
   other guides touch this with a ten-foot-pole.  This guide at least
-  +makes an attemp+ /will make an attempt with an ORM in the future!/
+  +makes an attempt+ /will make an attempt with an ORM in the future!/
 
 The recipe I follow in this guide for building a GraphQL API server in
 Java /for a relational database/ is the following:
@@ -981,7 +981,7 @@ the following on this topic:
 don’t resolve GraphQL requests...[instead] compile them to a
 “language” understood by the upstream data source – a SQL query or a
 REST call. If you use multiple type systems (GraphQL, SQL,
-OpenAPISpec, etc.), why not leverage these systems to interoperate
+OpenAPI Spec, etc.), why not leverage these systems to interoperate
 efficiently?
 #+end_quote
 
