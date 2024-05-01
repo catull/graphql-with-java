@@ -764,7 +764,7 @@ patterns I want you to see through the forest of code are these:
 8. You /will/ experience the urge to be clever, to create abstractions
    that dynamically respond to more and more complex combinations of
    parameters, filters, and other conditions.  Congratulations:
-   you're on your way to building a [[*Is this the /Only/ way to build a GraphQL API server?][general-purpose query engine]].
+   you're on your way to building a [[the end][general-purpose query engine]].
 
 ** Step 15:  Upgrade /some/ of those resolver/data-fetcher methods with the data loader pattern.
 
