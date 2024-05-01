@@ -88,6 +88,9 @@ done):
   - [[https://the-guild.dev/graphql/codegen][code generators]]
   - [[https://commerce.nearform.com/open-source/urql/][client]] [[https://www.apollographql.com/docs/react/][libraries]]
 
+The evolution of GraphQL from REST is a fascinating history which we
+discuss at length in the first few sections of [[https://hasura.io/resources/graphql-handbook-2024][The GraphQL Handbook]]. 
+
 But, what /else/ is GraphQL.  What /really/ is GraphQL?  GraphQL is
 /also/ a data model for its query language and, despite the name,
 neither the query language nor the data model are very "graphy."  The
@@ -934,7 +937,22 @@ generalize the servers, and decouple them from any particular data
 model.  This is what I call the "natural way" of building a GraphQL
 API, as it's a natural evolution from the trivial "easy way" of
 tutorials and "Getting Started" guides, and from the cumbersome "real
-way" of resolvers and even data loaders.
+way" of resolvers and even data loaders.  More generally, it can be
+considered the [[https://hasura.io/blog/compile-dont-resolve-designing-a-feature-rich-high-performance-domain-driven-graphql-api][Domain-Driven]] approach, which [[https://hasura.io/blog/@praveenweb][Praveen Durairaju]]
+describes in this way.
+
+#+begin_quote
+At its core, the domain-driven approach translates the richness of
+your domain, primarily the storage layer (databases), to your
+API. Databases have been around for a while now and they are
+increasingly getting more and more powerful. SQL, regardless of the
+specific dialect supported by your SQL DB, has long been the gold
+standard of expressiveness of data requirements – any sufficiently
+expressive API will begin to look like SQL – there’s no
+alternative. So, instead of reinventing the wheel, a domain-driven
+approach mirrors whatever flexibility your domain allows in terms of
+access patterns/capabilities.
+#+end_quote
 
 Building a GraphQL server with a network of nested resolvers offers
 some flexibility and dynamism, and requires a lot of code.  Adding in
@@ -954,32 +972,100 @@ fetching the data, teach it to generate JSON while you're at it, and
 this is the best you will ever do with a GraphQL server (for a
 relational database).  It will be hard work, but you can take solace
 that having done it once, it need not ever be done again if you do it
-right, by introspecting the database to /generate/ the schema.
+right, by introspecting the database to /generate/ the schema.  Do
+/that/, and what you will build won't be so much a "GraphQL API
+server" as a "GraphQL to SQL compiler."  [[https://hasura.io/blog/@praveenweb][Praveen]] goes on to say in [[https://hasura.io/blog/compile-dont-resolve-designing-a-feature-rich-high-performance-domain-driven-graphql-api][Compile, don't resolve: Designing a feature-rich, high-performance, domain-driven GraphQL API]] on
+the following on this topic:
 
-Do /that/, and what you will build won't be so much a "GraphQL API
-server" as a "GraphQL to SQL compiler."  If that gives you pause,
-consider that this is what you were already doing all along, anyway.
-+The easy way+, the real way, the natural way:  they're +all+ both
-necessarily GraphQL to SQL compilers!  They just lie along a spectrum
-of versatility, flexibility, and efficiency.  Acknowledge that
-building a GraphQL to SQL compiler is what you were doing all along,
-embrace that fact, and lean into it, and you may never need to build
-another GraphQL server again.  What could be better than that?
+#+begin_quote
+don’t resolve GraphQL requests...[instead] compile them to a
+“language” understood by the upstream data source – a SQL query or a
+REST call. If you use multiple type systems (GraphQL, SQL,
+OpenAPISpec, etc.), why not leverage these systems to interoperate
+efficiently?
+#+end_quote
+
+If that gives you pause, consider that this is what you were already
+doing all along, anyway.  +The easy way+, the real way, the natural
+way: they're +all+ both necessarily GraphQL to SQL compilers!  They
+just lie along a spectrum of versatility, flexibility, and efficiency.
+Acknowledge that building a GraphQL to SQL compiler is what you were
+doing all along, embrace that fact, and lean into it, and you may
+never need to build another GraphQL server again.  What could be
+better than that?
 
 One thing that could be better than building your last GraphQL server,
 or your only GraphQL server, is never building a GraphQL server in the
 first place.  After all, your goal wasn't to /build/ a GraphQL API,
 but rather to /have/ a GraphQL API.  The easiest way to /have/ a
 GraphQL API is just to go get one.  Get one for free if you can.  Buy
-one if the needs justify it.  This is the [[https://en.wikipedia.org/wiki/Boss_(video_games)#Final_boss][final boss]] on the journey of
+one if the needs justify it.  This is the [[https://en.wikipedia.org/wiki/Boss_(video_games)#Final_boss][final boss]] on the [[https://dev.to/sandipd/from-basics-to-supergraph-a-practical-guide-for-your-graphql-adoption-journey-5cff][journey]] of
 GraphQL maturity.
 
 * How to choose "Buy" over "Buy"
 
-#+begin_quote
-/stuff about why Hasura is so much better/
-#+end_quote
+Of course "buy" in this case is really just a stand-in for the general
+concept which is to "acquire" an existing solution rather than
+building one.  If this path is available, there are several fine
+options, though as the constraints pile up the choices narrow quickly.
 
+A fine self-hosted open-source option is [[https://www.graphile.org/postgraphile/][PostGraphile]], a GraphQL
+server for PostgreSQL.  However, many operations will prefer a managed
+solution.  Moreover, many others will require access to a diverse,
+heterogeneous set of data sources.  This is where [[https://hasura.io/][Hasura]] really
+shines.  Like PostGraphile, Hasura offers a self-hosted [[https://hasura.io/opensource/][open-source]]
+option for PostgreSQL, and it comes "batteries-included" with a lot of
+functional and non-functional concerns that you will never get around
+to with a DIY approach:
+
+- rich API
+- high performance
+- authentication and authorization
+- observability
+- business logic and data integration
+
+Moving from self-hosted to the cloud, Hasura has got you covered there
+as well, with [[https://hasura.io/cloud/][Hasura Cloud]].  It has a generous "free tier" and a
+smooth upgrade path and modest [[https://hasura.io/pricing][pricing]] for production workloads.
+Moving further up the ladder to large enterprise settings, the smooth
+upgrade path continues with [[https://hasura.io/enterprise/][Hasura Enterprise]].  Moreover, with Hasura
+Cloud and Hasura Enterprise, it opens the door to many more data
+sources, including but not limited to:
+
+- PostgreSQL
+- MySQL/MariaDB
+- Microsoft SQL Server
+- Oracle
+- Snowflake
+- MongoDB
+
+Hasura is a good option, but it's not the only option for "buy."  Even
+"build" via a DIY approach still is an option, in Java as it is in
+other programming languages.  If you do choose to build GraphQL
+servers with Java, I hope you will find this article, and especially
+the section [[*Step 15: Upgrade /some/ of those resolver/data-fetcher methods with the data loader pattern.][above]] helpful in breaking out of the relentless tutorials,
+"Getting Started" guides, and "To-Do" apps.  These are vast topics in
+a shifting landscape, which warrant an iterative approach, as well as
+a modest amount of repetition.  We at Hasura will continue to repeat
+and refine these ideas--and the details within--as a leader in the
+GraphQL community.  As we do we welcome input from and collaboration
+with the community.  Feedback is always welcome, so if there are ways
+that this guide can be improved please do let us know.
+
+* About Me
+
+My name is David A. Ventimiglia.  I have been a physicist, an
+educator, a software engineer, a data engineer, a machine learning
+engineer, and a solutions engineer.  Today, I am a solutions architect
+at [[https://hasura.io/][Hasura]].  I came here because Hasura embraces principles I have
+learned to live by over my career: simplicity over complexity,
+constraints over code, data over algorithms, people over process.  For
+many common tasks in software design, architecture, and engineering,
+these principles will guide you to solutions faster, cheaper, and more
+reliably than conventional wisdom will allow.  It's not difficult,
+but it does involve a change of perspective.  Hasura the software can
+help you do it.  Hasura the company can help you support it.  And
+along the way, I can help you understand it.
 
 #  LocalWords:  runtime Initializr QueryMapping YugaByte InvoiceLine
 #  LocalWords:  MediaType PlaylistTrack ArtistById AlbumById AlbumId
