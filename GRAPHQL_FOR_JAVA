@@ -1,6 +1,7 @@
 # -*- mode: org; -*-
 
 #+startup: indent
+#+options: html5-fancy:t
 
 #+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
 #+options: author:t broken-links:nil c:nil creator:nil
@@ -868,7 +869,7 @@ with [[https://www.oracle.com/technical-resources/articles/java/ma14-java-se-8-s
 
 *** Editorial Aside!
 
-#+begin_quote
+#+begin_detail
 This raises an important point about the "N+1 problem" that is /never/
 addressed, and that neglect just serves to exaggerate the scale of the
 problem in a real world setting.  /If/ we have limits and/or
@@ -894,7 +895,7 @@ factor/, but by approximately a /constant factor/.  In a well-designed
 application, it probably will be a constant factor well below 100.
 Consider this when balancing the trade-offs in developer time, in
 complexity, and in hardware scaling, when confronting the N+1 problem.
-#+end_quote
+#+end_detail
 
 * Is this the /Only/ way to build a GraphQL API server?<<the end>>
 
