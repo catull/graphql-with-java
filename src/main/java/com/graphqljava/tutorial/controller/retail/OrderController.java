@@ -2,7 +2,11 @@ package com.graphqljava.tutorial.controller.retail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.graphqljava.tutorial.controller.BaseController;
 import com.graphqljava.tutorial.model.retail.account;
@@ -11,6 +15,7 @@ import com.graphqljava.tutorial.model.retail.order_detail;
 import com.graphqljava.tutorial.model.retail.input.OrderInput;
 
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.jdbc.core.RowMapper;
@@ -63,6 +68,23 @@ public class OrderController extends BaseController {
         return spec(input).query(rowMapper).list();
     }
 
+    @BatchMapping
+    public Map<account, List<order>> ordersMulti(final List<account> accounts) {
+        Map<UUID, account> accountMap = accounts.stream().collect(Collectors.toMap(account::id, Function.identity()));
+        Set<UUID> ids = accountMap.keySet();
+        String sql = "SELECT * FROM \"order\" WHERE \"account_id\" IN (?)";
+        Map<UUID, List<order>> orders = this.jdbcClient
+                .sql(sql)
+                .param(ids)
+                .query(rowMapper)
+                .stream()
+                .collect(Collectors.groupingBy(order::account_id));
+        return orders
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> accountMap.get(entry.getKey()), Map.Entry::getValue));
+    }
+
     private static final RowMapper<order>
         rowMapper = (rs, rowNum) -> new order(
             UUID.fromString(rs.getString("id")),
@@ -71,7 +93,7 @@ public class OrderController extends BaseController {
             rs.getString("region"),
             rs.getString("created_at"),
             rs.getString("updated_at")
-        );
+    );
 
     private StatementSpec spec(final OrderInput input) {
         List<String> columns = new ArrayList<>();

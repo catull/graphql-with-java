@@ -3,6 +3,7 @@ package com.graphqljava.tutorial.controller.retail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import com.graphqljava.tutorial.controller.BaseController;
 import com.graphqljava.tutorial.model.retail.account;
@@ -20,7 +21,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AccountController extends BaseController {
 
-    public AccountController(final JdbcClient jdbcClient) {
+    public AccountController(final JdbcClient jdbcClient)
+    {
         super (jdbcClient);
     }
 
@@ -39,7 +41,7 @@ public class AccountController extends BaseController {
     }
 
     @SchemaMapping
-    public account account(final order order, @Argument AccountInput input) {
+    public CompletableFuture<account> account(final order order, @Argument AccountInput input) {
         if (null == input) {
             input = new AccountInput();
         }
@@ -47,7 +49,7 @@ public class AccountController extends BaseController {
             input.setId(order.account_id());
         }
 
-        return spec(input).query(rowMapper).optional().orElse(null);
+        return CompletableFuture.completedFuture(spec(input).query(rowMapper).optional().orElse(null));
     }
 
     private static final RowMapper<account> rowMapper =
