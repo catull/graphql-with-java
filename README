@@ -124,9 +124,15 @@ or
 
 * Tests
 
+You can run all Chinook tests directly from the command line:
+
+#+begin_src bash
+  mvn test
+#+end_src
+
 #+begin_src graphql :url http://localhost:8080/graphql
 query {
-  orders(limit: 1) {
+  orders (input: { limit 1 }) {
     id
     status
     account {

@@ -6,11 +6,11 @@
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Album(limit: 1) {
+    Album (input: { limit 1 }) {
       AlbumId
       ArtistId
       Title
-      Tracks(limit: 1) {
+      Tracks (input: { limit 1 }) {
         TrackId
         AlbumId
         Bytes
@@ -57,16 +57,16 @@
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Artist(limit: 1) {
+    Artist (input: { limit 1 }) {
       ArtistId
       Name
-      Albums(limit: 1) {
+      Albums (input: { limit 1 }) {
         AlbumId
         ArtistId
         Title
       }
     }
-  }  
+  }
 #+end_src
 
 #+RESULTS:
@@ -94,7 +94,7 @@
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Customer(limit: 1) {
+    Customer (input: { limit 1 }) {
       Address
       City
       Company
@@ -126,7 +126,7 @@
         Title
       }
     }
-  }  
+  }
 #+end_src
 
 #+RESULTS:
@@ -159,7 +159,7 @@
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Customer(limit: 1) {
+    Customer (input: { limit 1 }) {
       Address
       City
       Company
@@ -173,7 +173,7 @@
       PostalCode
       State
       SupportRepId
-      Invoices(limit: 1) {
+      Invoices (input: { limit 1 }) {
         BillingAddress
         BillingCity
         BillingCountry
@@ -230,7 +230,7 @@
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Employee(limit: 1) {
+    Employee (input: { limit 1 }) {
       Address
       BirthDate
       City
@@ -296,7 +296,7 @@
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Employee(limit: 1) {
+    Employee (input: { limit 1 }) {
       Address
       BirthDate
       City
@@ -311,7 +311,7 @@
       PostalCode
       ReportsTo
       State
-      Customers(limit: 1) {
+      Customers (input: { limit 1 }) {
         Address
         City
         Company
@@ -361,7 +361,7 @@
 
 #+begin_src graphql :url http://localhost:8082/graphql
 query {
-  Employee(limit: 1) {
+  Employee (input: { limit 1 }) {
     Address
     BirthDate
     City
@@ -427,10 +427,10 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Genre(limit: 1) {
+    Genre (input: { limit 1 }) {
       GenreId
       Name
-      Tracks(limit: 1) {
+      Tracks (input: { limit 1 }) {
         AlbumId
         Bytes
         Composer
@@ -476,7 +476,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Invoice(limit: 1) {
+    Invoice (input: { limit 1 }) {
       BillingAddress
       BillingCity
       BillingCountry
@@ -530,7 +530,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Invoice(limit: 1) {
+    Invoice (input: { limit 1 }) {
       BillingAddress
       BillingCity
       BillingCountry
@@ -540,7 +540,7 @@ query {
       InvoiceDate
       InvoiceId
       Total
-      InvoiceLines(limit: 1) {
+      InvoiceLines (input: { limit 1 }) {
         InvoiceId
         InvoiceLineId
         Quantity
@@ -585,7 +585,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    InvoiceLine(limit: 1) {
+    InvoiceLine (input: { limit 1 }) {
       InvoiceId
       InvoiceLineId
       Quantity
@@ -638,7 +638,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    InvoiceLine(limit: 1) {
+    InvoiceLine (input: { limit 1 }) {
       InvoiceId
       InvoiceLineId
       Quantity
@@ -691,10 +691,10 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    MediaType(limit: 1) {
+    MediaType (input: { limit 1 }) {
       MediaTypeId
       Name
-      Tracks(limit: 1) {
+      Tracks (input: { limit 1 }) {
         AlbumId
         Bytes
         Composer
@@ -740,9 +740,9 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-     Playlist(limit: 1) {
+     Playlist (input: { limit 1 }) {
        PlaylistId
-       PlaylistTracks(limit: 1) {
+       PlaylistTracks (input: { limit 1 }) {
          PlaylistId
          TrackId
        }
@@ -773,7 +773,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    PlaylistTrack(limit: 1) {
+    PlaylistTrack (input: { limit 1 }) {
       PlaylistId
       TrackId
       Playlist {
@@ -806,7 +806,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    PlaylistTrack(limit: 1) {
+    PlaylistTrack (input: { limit 1 }) {
       PlaylistId
       TrackId
       Track {
@@ -843,7 +843,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Track(limit: 1) {
+    Track (input: { limit 1 }) {
       AlbumId
       Bytes
       Composer
@@ -892,7 +892,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Track(limit: 1) {
+    Track (input: { limit 1 }) {
       AlbumId
       Bytes
       Composer
@@ -907,7 +907,7 @@ query {
         Name
       }
     }
-  }  
+  }
 #+end_src
 
 #+RESULTS:
@@ -939,7 +939,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Track(limit: 1) {
+    Track (input: { limit 1 }) {
       AlbumId
       Bytes
       Composer
@@ -949,7 +949,7 @@ query {
       Name
       TrackId
       UnitPrice
-      InvoiceLines(limit: 1) {
+      InvoiceLines (input: { limit 1 }) {
         InvoiceId
         Quantity
         InvoiceLineId
@@ -994,7 +994,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Track(limit: 1) {
+    Track (input: { limit 1 }) {
       AlbumId
       Bytes
       Composer
@@ -1004,7 +1004,7 @@ query {
       Name
       TrackId
       UnitPrice
-      PlaylistTracks(limit: 1) {
+      PlaylistTracks (input: { limit 1 }) {
         PlaylistId
         TrackId
       }
@@ -1043,7 +1043,7 @@ query {
 
 #+begin_src graphql :url http://localhost:8082/graphql
   query {
-    Track(limit: 1) {
+    Track (input: { limit 1 }) {
       AlbumId
       Bytes
       Composer
@@ -1058,7 +1058,7 @@ query {
         MediaTypeId
       }
     }
-  }  
+  }
 #+end_src
 
 #+RESULTS:
@@ -1079,6 +1079,74 @@ query {
         "MediaType": {
           "Name": "MPEG audio file",
           "MediaTypeId": 1
+        }
+      }
+    ]
+  }
+}
+#+end_example
+
+* Track to Album to Track again: Track uses an Album with Tracks, but only if a Track's name has a certain value.
+
+#+begin_src graphql :url http://localhost:8082/graphql
+{
+  Tracks (
+    input: {
+      limit: 3
+    })
+  {
+    TrackId
+    Name
+    Album (
+      input: {
+        limit: 3
+      })
+    {
+      AlbumId
+      Tracks (
+        input: {
+          limit: 3,
+          Name: "Balls to the Wall"
+        })
+      {
+        Name
+      }
+    }
+  }
+}
+#+end_src
+
+#+RESULTS:
+#+begin_example
+{
+  "data": {
+    "Tracks": [
+      {
+        "TrackId": "1",
+        "Name": "For Those About To Rock (We Salute You)",
+        "Album": {
+          "AlbumId": "1",
+          "Tracks": []
+        }
+      },
+      {
+        "TrackId": "2",
+        "Name": "Balls to the Wall",
+        "Album": {
+          "AlbumId": "2",
+          "Tracks": [
+            {
+              "Name": "Balls to the Wall"
+            }
+          ]
+        }
+      },
+      {
+        "TrackId": "3",
+        "Name": "Fast As a Shark",
+        "Album": {
+          "AlbumId": "3",
+          "Tracks": []
         }
       }
     ]

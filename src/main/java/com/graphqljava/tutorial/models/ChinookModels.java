@@ -1,21 +1,18 @@
-package com.graphqljava.tutorial.retail.models;
+package com.graphqljava.tutorial.models;
 
 public class ChinookModels {
-    public static
-	record Album (
+    public record Album (
 		      Integer AlbumId,
 		      String Title,
 		      Integer ArtistId
 		      ) {}
 
-    public static
-	record Artist (
+    public record Artist (
 		       Integer ArtistId,
 		       String Name
 		       ) {}
 
-    public static
-	record Customer (
+    public record Customer (
 			 Integer CustomerId,
 			 String FirstName,
 			 String LastName,
@@ -31,8 +28,7 @@ public class ChinookModels {
 			 Integer SupportRepId
 			 ) {}
 
-    public static
-	record Employee (
+    public record Employee (
 			 Integer EmployeeId,
 			 String LastName,
 			 String FirstName,
@@ -50,14 +46,12 @@ public class ChinookModels {
 			 String Email
 			 ) {}
 
-    public static
-	record Genre (
+    public record Genre (
 		      Integer GenreId,
 		      String Name
 		      ) {}
 
-    public static
-	record Invoice (
+    public record Invoice (
 			Integer InvoiceId,
 			Integer CustomerId,
 			String InvoiceDate,
@@ -69,8 +63,7 @@ public class ChinookModels {
 			Float Total
 			) {}
 
-    public static
-	record InvoiceLine (
+    public record InvoiceLine (
 			    Integer InvoiceLineId,
 			    Integer InvoiceId,
 			    Integer TrackId,
@@ -79,27 +72,23 @@ public class ChinookModels {
 			    ) {}
 
 
-    public static
-	record MediaType (
+    public record MediaType (
 			  Integer MediaTypeId,
 			  String Name
 			  ) {}
 
 
-    public static
-	record Playlist (
+    public record Playlist (
 			 Integer PlaylistId,
 			 String Name
 			 ) {}
 
-    public static
-	record PlaylistTrack (
+    public record PlaylistTrack (
 			      Integer PlaylistId,
 			      Integer TrackId
 			      ) {}
 
-    public static
-	record Track (
+    public record Track (
 		      Integer TrackId,
 		      String Name,
 		      Integer AlbumId,

@@ -1,0 +1,111 @@
+# -*- mode: graphql; -*-
+
+# Chinook
+
+input AlbumInput {
+  AlbumId  : ID
+  Title    : String
+  ArtistId : Int
+  limit    : Int
+}
+
+input ArtistInput {
+  ArtistId: ID
+  Name    : String
+  limit   : Int
+}
+
+input CustomerInput {
+  CustomerId   : ID
+  FirstName    : String
+  LastName     : String
+  Company      : String
+  Address      : String
+  City         : String
+  State        : String
+  Country      : String
+  PostalCode   : String
+  Phone        : String
+  Fax          : String
+  Email        : String
+  SupportRepId : Int
+  limit        : Int
+}
+
+input EmployeeInput {
+  EmployeeId : ID
+  LastName   : String
+  FirstName  : String
+  Title      : String
+  ReportsTo  : Int
+  BirthDate  : String
+  HireDate   : String
+  Address    : String
+  City       : String
+  State      : String
+  Country    : String
+  PostalCode : String
+  Phone      : String
+  Fax        : String
+  Email      : String
+  limit      : Int
+}
+
+input GenreInput {
+  GenreId : ID
+  Name    : String
+  limit   : Int
+}
+
+input InvoiceInput {
+  InvoiceId         : ID
+  CustomerId        : ID
+  InvoiceDate       : String
+  BillingAddress    : String
+  BillingCity       : String
+  BillingState      : String
+  BillingCountry    : String
+  BillingPostalCode : String
+  Total             : Float
+  limit             : Int
+}
+
+input InvoiceLineInput {
+  InvoiceLineId : ID
+  InvoiceId     : ID
+  TrackId       : ID
+  UnitPrice     : Float
+  Quantity      : Int
+  limit         : Int
+}
+
+input MediaTypeInput {
+  MediaTypeId : ID
+  Name        : String
+  limit       : Int
+}
+
+input PlaylistInput {
+  PlaylistId : ID
+  Name       : String
+  limit      : Int
+}
+
+input PlaylistTrackInput {
+  PlaylistId : ID
+  TrackId    : Int
+  limit      : Int
+}
+
+input TrackInput {
+  TrackId      : ID
+  Name         : String
+  AlbumId      : ID
+  MediaTypeId  : ID
+  GenreId      : ID
+  Composer     : String
+  Milliseconds : Int
+  Bytes        : Int
+  UnitPrice    : Float
+  limit        : Int
+}
