@@ -1,0 +1,46 @@
+# -*- mode: graphql; -*-
+
+# Retail
+
+input AccountInput {
+  id        : ID
+  name      : String
+  created_at: String
+  updated_at: String
+  limit     : Int
+}
+
+input OrderInput {
+  id        : ID
+  account_id: ID
+  status    : String
+  region    : String
+  created_at: String
+  updated_at: String
+  limit     : Int
+}
+
+input OrderDetailInput {
+  id        : ID
+  order_id  : ID
+  product_id: ID
+  units     : Int
+  created_at: String
+  updated_at: String
+  limit     : Int
+}
+
+input ProductInput {
+  id        : ID
+  name      : String
+  price     : Int
+  created_at: String
+  updated_at: String
+  limit     : Int
+}
+
+input RegionInput {
+  value      : String
+  description: String
+  limit     : Int
+}

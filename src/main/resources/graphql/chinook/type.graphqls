@@ -1,0 +1,133 @@
+# -*- mode: graphql; -*-
+
+# Chinook
+
+type Album {
+  AlbumId  : ID!
+  Title    : String
+  ArtistId : ID
+  # relations
+  Artist(input: ArtistInput): Artist
+  Tracks(input: TrackInput): [Track]
+}
+
+type Artist {
+  ArtistId: ID!
+  Name    : String
+  # relations
+  Albums(input: AlbumInput): [Album]
+}
+
+type Customer {
+  CustomerId   : ID!
+  FirstName    : String
+  LastName     : String
+  Company      : String
+  Address      : String
+  City         : String
+  State        : String
+  Country      : String
+  PostalCode   : String
+  Phone        : String
+  Fax          : String
+  Email        : String
+  SupportRepId : ID
+  # relations
+  Invoices(input: InvoiceInput): [Invoice]
+  SupportRep(input: EmployeeInput): Employee
+}
+
+type Employee {
+  EmployeeId : ID!
+  LastName   : String
+  FirstName  : String
+  Title      : String
+  ReportsTo  : ID
+  BirthDate  : String
+  HireDate   : String
+  Address    : String
+  City       : String
+  State      : String
+  Country    : String
+  PostalCode : String
+  Phone      : String
+  Fax        : String
+  Email      : String
+  # relations
+  Customers(input: CustomerInput): [Customer]
+  Manager(input: EmployeeInput): Employee
+  Reports(input: EmployeeInput): [Employee]
+}
+
+type Genre {
+  GenreId : ID!
+  Name    : String
+  # relations
+  Tracks(input: TrackInput): [Track]
+}
+
+type Invoice {
+  InvoiceId         : ID!
+  CustomerId        : ID
+  InvoiceDate       : String
+  BillingAddress    : String
+  BillingCity       : String
+  BillingState      : String
+  BillingCountry    : String
+  BillingPostalCode : String
+  Total             : Float
+  # relations
+  Customer(input: CustomerInput): Customer
+  InvoiceLines(input: InvoiceLineInput): [InvoiceLine]
+}
+
+type InvoiceLine {
+  InvoiceLineId : ID!
+  InvoiceId     : ID
+  TrackId       : ID
+  UnitPrice     : Float
+  Quantity      : Int
+  # relations
+  Invoice(input: InvoiceInput): Invoice
+  Track(input: TrackInput): Track
+}
+
+type MediaType {
+  MediaTypeId : ID!
+  Name        : String
+  # relations
+  Tracks(input: TrackInput): [Track]
+}
+
+type Playlist {
+  PlaylistId : ID!
+  Name       : String
+  # relations
+  PlaylistTracks(input: PlaylistTrackInput) : [PlaylistTrack]
+}
+
+type PlaylistTrack {
+  PlaylistId : ID!
+  TrackId    : ID
+  # relations
+  Playlist(input: PlaylistInput): Playlist
+  Track(input: TrackInput): Track
+}
+
+type Track {
+  TrackId      : ID!
+  Name         : String
+  AlbumId      : ID
+  MediaTypeId  : ID
+  GenreId      : ID
+  Composer     : String
+  Milliseconds : Int
+  Bytes        : Int
+  UnitPrice    : Float
+  # relations
+  Album(input: AlbumInput): Album
+  Genre(input: GenreInput): Genre
+  InvoiceLines(input: InvoiceLineInput): [InvoiceLine]
+  MediaType(input: MediaTypeInput): MediaType
+  PlaylistTracks(input: PlaylistTrackInput) : [PlaylistTrack]
+}
