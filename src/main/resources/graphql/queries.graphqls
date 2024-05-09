@@ -1,0 +1,39 @@
+# -*- mode: graphql; -*-
+
+type Query {
+    # Retail
+
+    accounts(input: AccountInput): [account]
+
+    orders(input: OrderInput): [order]
+
+    order_details(input: OrderDetailInput): [order_detail]
+
+    products(input: ProductInput): [product]
+
+    regions(input: RegionInput): [region]
+
+    # Chinook
+
+    Albums(input: AlbumInput): [Album]
+
+    Artists(input: ArtistInput): [Artist]
+
+    Customers(input: CustomerInput): [Customer]
+
+    Employees(input: EmployeeInput): [Employee]
+
+    Genres(input: GenreInput): [Genre]
+
+    Invoices(input: InvoiceInput): [Invoice]
+
+    InvoiceLines(input: InvoiceLineInput): [InvoiceLine]
+
+    MediaTypes(input: MediaTypeInput): [MediaType]
+
+    Playlists(input: PlaylistInput): [Playlist]
+
+    PlaylistTracks(input: PlaylistTrackInput): [PlaylistTrack]
+
+    Tracks(input: TrackInput): [Track]
+}
