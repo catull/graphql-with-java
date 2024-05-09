@@ -12,14 +12,14 @@ services:
       - ./initdb.d-postgres:/docker-entrypoint-initdb.d:ro
       - type: tmpfs
         target: /var/lib/pg/data
-  graphql-java:
-    build: .
-    ports:
-      - ${SBPORT:-8080}:8080
-    environment:
-      PGDATABASE: postgres
-      PGHOST: postgres
-      PGPASSWORD: postgres
-      PGPORT: 5432
-      PGUSER: postgres
-      SBPORT: 8080
+  # graphql-java:
+  #   build: .
+  #   ports:
+  #     - ${SBPORT:-8080}:8080
+  #   environment:
+  #     PGDATABASE: postgres
+  #     PGHOST: postgres
+  #     PGPASSWORD: postgres
+  #     PGPORT: 5432
+  #     PGUSER: postgres
+  #     SBPORT: 8080
