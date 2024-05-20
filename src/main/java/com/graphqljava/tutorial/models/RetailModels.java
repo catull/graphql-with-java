@@ -1,43 +1,81 @@
 package com.graphqljava.tutorial.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 public class RetailModels {
-	public record account (
-		UUID id,
-		String name,
-		String created_at,
-		String updated_at) {
+
+	@Entity
+	@Table(name = "\"account\"")
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Data
+	public static class account {
+		@Id
+		private UUID id;
+		private String name;
+		private String created_at;
+		private String updated_at;
 	}
 
-	public record order_detail (
-		UUID id,
-		UUID order_id,
-		UUID product_id,
-		Integer units,
-		String created_at,
-		String updated_at) {
+	@Entity
+	@Table(name = "\"order_detail\"")
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Data
+	public static class order_detail {
+		@Id
+		private UUID id;
+		private UUID order_id;
+		private UUID product_id;
+		private Integer units;
+		private String created_at;
+		private String updated_at;
 	}
 
-	public record order(
-		UUID id,
-		UUID account_id,
-		String status,
-		String region,
-		String created_at,
-		String updated_at) {
+	@Entity
+	@Table(name = "\"order\"")
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Data
+	public static class order {
+		@Id
+		private UUID id;
+		private UUID account_id;
+		private String status;
+		private String region;
+		private String created_at;
+		private String updated_at;
 	}
 
-	public record product(
-		UUID id,
-		String name,
-		Integer price,
-		String created_at,
-		String updated_at) {
+	@Entity
+	@Table(name = "\"product\"")
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Data
+	public static class product {
+		@Id
+		private UUID id;
+		private String name;
+		private Integer price;
+		private String created_at;
+		private String updated_at;
 	}
 
-	public record region(
-		String value,
-		String description) {
+	@Entity
+	@Table(name = "\"region\"")
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Data
+	public static class region {
+		@Id
+		private String value;
+		private String description;
 	}
 }

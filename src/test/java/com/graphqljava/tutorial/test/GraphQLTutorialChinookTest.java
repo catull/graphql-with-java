@@ -49,7 +49,8 @@ public class GraphQLTutorialChinookTest {
                 {
                   Albums (
                     input: {
-                        limit: 1
+                        AlbumId: 1,
+                        ArtistId: 1,
                     })
                   {
                     AlbumId
@@ -57,7 +58,8 @@ public class GraphQLTutorialChinookTest {
                     Title
                     Tracks (
                       input: {
-                        limit: 1
+                        TrackId: 1,
+                        AlbumId: 1,
                       })
                     {
                       TrackId
@@ -81,21 +83,20 @@ public class GraphQLTutorialChinookTest {
         path.hasValue();
         GraphQlTester.EntityList<Album> entityListAlbum = path.entityList(Album.class);
         entityListAlbum.hasSize(1);
-
-        Album album = entityListAlbum.get().getFirst();
-        Assertions.assertNotNull(album);
+        Album actualAlbum = entityListAlbum.get().getFirst();
+        Assertions.assertNotNull(actualAlbum);
         Album expectedAlbum = new Album(
                 1,
                 "For Those About To Rock We Salute You",
                 1);
-        Assertions.assertEquals(expectedAlbum, album);
+        Assertions.assertEquals(expectedAlbum, actualAlbum);
 
         path = response.path("Albums[0].Tracks");
         GraphQlTester.EntityList<Track> entityListTrack = path.entityList(Track.class);
         entityListTrack.hasSize(1);
 
-        Track track = entityListTrack.get().getFirst();
-        Assertions.assertNotNull(track);
+        Track actualTrack = entityListTrack.get().getFirst();
+        Assertions.assertNotNull(actualTrack);
         Track expectedTrack = new Track(
                 1,
                 "For Those About To Rock (We Salute You)",
@@ -107,7 +108,7 @@ public class GraphQLTutorialChinookTest {
                 11_170_334,
                 0.99f
         );
-        Assertions.assertEquals(expectedTrack, track);
+        Assertions.assertEquals(expectedTrack, actualTrack);
     }
 
     @Test

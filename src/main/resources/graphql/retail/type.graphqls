@@ -9,7 +9,7 @@ type account {
   updated_at: String
   # relations
   orders(input: AccountInput): [order]
-  ordersMulti: [account]
+  #ordersMulti: [account]
 }
 
 type order {

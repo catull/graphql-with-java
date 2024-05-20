@@ -1,5 +1,16 @@
 package com.graphqljava.tutorial.controllers;
 
+import com.graphqljava.tutorial.jpa.chinook.AlbumRepository;
+import com.graphqljava.tutorial.jpa.chinook.ArtistRepository;
+import com.graphqljava.tutorial.jpa.chinook.CustomerRepository;
+import com.graphqljava.tutorial.jpa.chinook.EmployeeRepository;
+import com.graphqljava.tutorial.jpa.chinook.GenreRepository;
+import com.graphqljava.tutorial.jpa.chinook.InvoiceLineRepository;
+import com.graphqljava.tutorial.jpa.chinook.InvoiceRepository;
+import com.graphqljava.tutorial.jpa.chinook.MediaTypeRepository;
+import com.graphqljava.tutorial.jpa.chinook.PlaylistRepository;
+import com.graphqljava.tutorial.jpa.chinook.PlaylistTrackRepository;
+import com.graphqljava.tutorial.jpa.chinook.TrackRepository;
 import com.graphqljava.tutorial.models.ChinookModels;
 import com.graphqljava.tutorial.models.input.AlbumInput;
 import com.graphqljava.tutorial.models.input.ArtistInput;
@@ -14,29 +25,22 @@ import com.graphqljava.tutorial.models.input.TrackInput;
 import com.graphqljava.tutorial.models.input.InvoiceLineInput;
 import com.graphqljava.tutorial.models.input.MediaTypeInput;
 
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 public class ChinookControllers {
     @Controller
-    public static class AlbumController extends BaseController {
+    public static class AlbumController {
+        private final AlbumRepository albumRepository;
 
-        public AlbumController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"Album\"";
+        public AlbumController(final AlbumRepository albumRepository) {
+            this.albumRepository = albumRepository;
         }
 
         @QueryMapping
@@ -44,7 +48,15 @@ public class ChinookControllers {
             if (null == input) {
                 input = new AlbumInput();
             }
-            return spec(input).query(rowMapper).list();
+
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.albumRepository.findAll(Example.of(new ChinookModels.Album(
+                    input.getAlbumId(),
+                    input.getTitle(),
+                    input.getArtistId()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -52,10 +64,12 @@ public class ChinookControllers {
             if (null == input) {
                 input = new AlbumInput();
             }
+
             if (null == input.getAlbumId()) {
-                input.setAlbumId(artist.ArtistId());
+                input.setAlbumId(artist.getArtistId());
             }
-            return spec(input).query(rowMapper).list();
+
+            return Albums(input);
         }
 
         @SchemaMapping
@@ -64,41 +78,23 @@ public class ChinookControllers {
                 input = new AlbumInput();
             }
             if (null == input.getAlbumId()) {
-                input.setAlbumId(track.AlbumId());
+                input.setAlbumId(track.getAlbumId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        private static final RowMapper<ChinookModels.Album>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Album(
-                rs.getInt("AlbumId"),
-                rs.getString("Title"),
-                rs.getInt("ArtistId")
-        );
-
-        private StatementSpec spec(final AlbumInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "AlbumId", input.getAlbumId());
-            extractInputParameterAndValue(columns, params, "Title", input.getTitle());
-            extractInputParameterAndValue(columns, params, "ArtistId", input.getArtistId());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return this.albumRepository.findOne(Example.of(new ChinookModels.Album(
+                    input.getAlbumId(),
+                    input.getTitle(),
+                    input.getArtistId()
+            ))).orElse(null);
         }
     }
 
     @Controller
-    public static class ArtistController extends BaseController {
+    public static class ArtistController {
+        private final ArtistRepository artistRepository;
 
-        public ArtistController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"Artist\"";
+        public ArtistController(final ArtistRepository artistRepository) {
+            this.artistRepository = artistRepository;
         }
 
         @QueryMapping
@@ -107,7 +103,13 @@ public class ChinookControllers {
                 input = new ArtistInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.artistRepository.findAll(Example.of(new ChinookModels.Artist(
+                    input.getArtistId(),
+                    input.getName()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -116,39 +118,22 @@ public class ChinookControllers {
                 input = new ArtistInput();
             }
             if (null == input.getArtistId()) {
-                input.setArtistId(album.ArtistId());
+                input.setArtistId(album.getArtistId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        private static final RowMapper<ChinookModels.Artist>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Artist(
-                rs.getInt("ArtistId"),
-                rs.getString("Name")
-        );
-
-        private StatementSpec spec(final ArtistInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "ArtistId", input.getArtistId());
-            extractInputParameterAndValue(columns, params, "Name", input.getName());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return this.artistRepository.findOne(Example.of(new ChinookModels.Artist(
+                    input.getArtistId(),
+                    input.getName()
+            ))).orElse(null);
         }
     }
 
     @Controller
-    public static class CustomerController extends BaseController {
+    public static class CustomerController {
+        private final CustomerRepository customerRepository;
 
-        public CustomerController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"Customer\"";
+        public CustomerController(final CustomerRepository customerRepository) {
+            this.customerRepository = customerRepository;
         }
 
         @QueryMapping
@@ -157,7 +142,24 @@ public class ChinookControllers {
                 input = new CustomerInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.customerRepository.findAll(Example.of(new ChinookModels.Customer(
+                    input.getCustomerId(),
+                    input.getFirstName(),
+                    input.getLastName(),
+                    input.getCompany(),
+                    input.getAddress(),
+                    input.getCity(),
+                    input.getState(),
+                    input.getCountry(),
+                    input.getPostalCode(),
+                    input.getPhone(),
+                    input.getFax(),
+                    input.getEmail(),
+                    input.getSupportRepId()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -166,10 +168,24 @@ public class ChinookControllers {
                 input = new CustomerInput();
             }
             if (null == input.getCustomerId()) {
-                input.setCustomerId(invoice.CustomerId());
+                input.setCustomerId(invoice.getCustomerId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
+            return this.customerRepository.findOne(Example.of(new ChinookModels.Customer(
+                    input.getCustomerId(),
+                    input.getFirstName(),
+                    input.getLastName(),
+                    input.getCompany(),
+                    input.getAddress(),
+                    input.getCity(),
+                    input.getState(),
+                    input.getCountry(),
+                    input.getPostalCode(),
+                    input.getPhone(),
+                    input.getFax(),
+                    input.getEmail(),
+                    input.getSupportRepId()
+            ))).orElse(null);
         }
 
         @SchemaMapping
@@ -178,61 +194,43 @@ public class ChinookControllers {
                 input = new CustomerInput();
             }
             if (null == input.getCustomerId()) {
-                input.setCustomerId(employee.EmployeeId());
+                input.setCustomerId(employee.getEmployeeId());
             }
 
-            return spec(input).query(rowMapper).list();
-        }
-
-        private static final RowMapper<ChinookModels.Customer>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Customer(
-                rs.getInt("CustomerId"),
-                rs.getString("FirstName"),
-                rs.getString("LastName"),
-                rs.getString("Company"),
-                rs.getString("Address"),
-                rs.getString("City"),
-                rs.getString("State"),
-                rs.getString("Country"),
-                rs.getString("PostalCode"),
-                rs.getString("Phone"),
-                rs.getString("Fax"),
-                rs.getString("Email"),
-                rs.getInt("SupportRepId")
-        );
-
-        private StatementSpec spec(final CustomerInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "CustomerId", input.getCustomerId());
-            extractInputParameterAndValue(columns, params, "LastName", input.getLastName());
-            extractInputParameterAndValue(columns, params, "FirstName", input.getFirstName());
-            extractInputParameterAndValue(columns, params, "Company", input.getCompany());
-            extractInputParameterAndValue(columns, params, "Address", input.getAddress());
-            extractInputParameterAndValue(columns, params, "City", input.getCity());
-            extractInputParameterAndValue(columns, params, "State", input.getState());
-            extractInputParameterAndValue(columns, params, "Country", input.getCountry());
-            extractInputParameterAndValue(columns, params, "PostalCode", input.getPostalCode());
-            extractInputParameterAndValue(columns, params, "Phone", input.getPhone());
-            extractInputParameterAndValue(columns, params, "Fax", input.getFax());
-            extractInputParameterAndValue(columns, params, "Email", input.getEmail());
-            extractInputParameterAndValue(columns, params, "SupportRepId", input.getSupportRepId());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return Customers(input);
         }
     }
 
     @Controller
-    public static class EmployeeController extends BaseController {
+    public static class EmployeeController {
+        private final EmployeeRepository employeeRepository;
 
-        public EmployeeController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
+        public EmployeeController(final EmployeeRepository employeeRepository) {
+            this.employeeRepository = employeeRepository;
         }
 
-        @Override
-        public String getTablePrefix() {
-            return "\"Employee\"";
+        public ChinookModels.Employee Employee(@Argument EmployeeInput input) {
+            if (null == input) {
+                input = new EmployeeInput();
+            }
+
+            return this.employeeRepository.findOne(Example.of(new ChinookModels.Employee(
+                    input.getEmployeeId(),
+                    input.getFirstName(),
+                    input.getLastName(),
+                    input.getTitle(),
+                    input.getReportsTo(),
+                    input.getBirthDate(),
+                    input.getHireDate(),
+                    input.getAddress(),
+                    input.getCity(),
+                    input.getState(),
+                    input.getCountry(),
+                    input.getPostalCode(),
+                    input.getPhone(),
+                    input.getFax(),
+                    input.getEmail()
+            ))).orElse(null);
         }
 
         @QueryMapping
@@ -241,7 +239,26 @@ public class ChinookControllers {
                 input = new EmployeeInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.employeeRepository.findAll(Example.of(new ChinookModels.Employee(
+                    input.getEmployeeId(),
+                    input.getFirstName(),
+                    input.getLastName(),
+                    input.getTitle(),
+                    input.getReportsTo(),
+                    input.getBirthDate(),
+                    input.getHireDate(),
+                    input.getAddress(),
+                    input.getCity(),
+                    input.getState(),
+                    input.getCountry(),
+                    input.getPostalCode(),
+                    input.getPhone(),
+                    input.getFax(),
+                    input.getEmail()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -250,10 +267,10 @@ public class ChinookControllers {
                 input = new EmployeeInput();
             }
             if (null == input.getEmployeeId()) {
-                input.setEmployeeId(customer.SupportRepId());
+                input.setEmployeeId(customer.getSupportRepId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
+            return Employee(input);
         }
 
         @SchemaMapping
@@ -262,10 +279,10 @@ public class ChinookControllers {
                 input = new EmployeeInput();
             }
             if (null == input.getEmployeeId()) {
-                input.setEmployeeId(employee.ReportsTo());
+                input.setEmployeeId(employee.getReportsTo());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
+            return Employee(input);
         }
 
         @SchemaMapping
@@ -274,65 +291,19 @@ public class ChinookControllers {
                 input = new EmployeeInput();
             }
             if (null == input.getReportsTo()) {
-                input.setReportsTo(employee.ReportsTo());
+                input.setReportsTo(employee.getReportsTo());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        private static final RowMapper<ChinookModels.Employee>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Employee(
-                rs.getInt("EmployeeId"),
-                rs.getString("LastName"),
-                rs.getString("FirstName"),
-                rs.getString("Title"),
-                rs.getInt("ReportsTo"),
-                rs.getString("BirthDate"),
-                rs.getString("HireDate"),
-                rs.getString("Address"),
-                rs.getString("City"),
-                rs.getString("State"),
-                rs.getString("Country"),
-                rs.getString("PostalCode"),
-                rs.getString("Phone"),
-                rs.getString("Fax"),
-                rs.getString("Email")
-        );
-
-        private StatementSpec spec(final EmployeeInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "EmployeeId", input.getEmployeeId());
-            extractInputParameterAndValue(columns, params, "LastName", input.getLastName());
-            extractInputParameterAndValue(columns, params, "FirstName", input.getFirstName());
-            extractInputParameterAndValue(columns, params, "Title", input.getTitle());
-            extractInputParameterAndValue(columns, params, "ReportsTo", input.getReportsTo());
-            extractInputParameterAndValue(columns, params, "BirthDate", input.getBirthDate());
-            extractInputParameterAndValue(columns, params, "HireDate", input.getHireDate());
-            extractInputParameterAndValue(columns, params, "Address", input.getAddress());
-            extractInputParameterAndValue(columns, params, "City", input.getCity());
-            extractInputParameterAndValue(columns, params, "State", input.getState());
-            extractInputParameterAndValue(columns, params, "Country", input.getCountry());
-            extractInputParameterAndValue(columns, params, "PostalCode", input.getPostalCode());
-            extractInputParameterAndValue(columns, params, "Phone", input.getPhone());
-            extractInputParameterAndValue(columns, params, "Fax", input.getFax());
-            extractInputParameterAndValue(columns, params, "Email", input.getEmail());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return Employee(input);
         }
     }
 
     @Controller
-    public static class GenreController extends BaseController {
+    public static class GenreController {
+        private final GenreRepository genreRepository;
 
-        public GenreController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"Genre\"";
+        public GenreController(final GenreRepository genreRepository) {
+            this.genreRepository = genreRepository;
         }
 
         @QueryMapping
@@ -341,7 +312,13 @@ public class ChinookControllers {
                 input = new GenreInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.genreRepository.findAll(Example.of(new ChinookModels.Genre(
+                    input.getGenreId(),
+                    input.getName()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -350,39 +327,22 @@ public class ChinookControllers {
                 input = new GenreInput();
             }
             if (null == input.getGenreId()) {
-                input.setGenreId(track.GenreId());
+                input.setGenreId(track.getGenreId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        private static final RowMapper<ChinookModels.Genre>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Genre(
-                rs.getInt("GenreId"),
-                rs.getString("Name")
-        );
-
-        private StatementSpec spec(final GenreInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "GenreId", input.getGenreId());
-            extractInputParameterAndValue(columns, params, "Name", input.getName());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return this.genreRepository.findOne(Example.of(new ChinookModels.Genre(
+                    input.getGenreId(),
+                    input.getName()
+            ))).orElse(null);
         }
     }
 
     @Controller
-    public static class InvoiceController extends BaseController {
+    public static class InvoiceController {
+        private final InvoiceRepository invoiceRepository;
 
-        public InvoiceController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"Invoice\"";
+        public InvoiceController(final InvoiceRepository invoiceRepository) {
+            this.invoiceRepository = invoiceRepository;
         }
 
         @QueryMapping
@@ -391,7 +351,20 @@ public class ChinookControllers {
                 input = new InvoiceInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.invoiceRepository.findAll(Example.of(new ChinookModels.Invoice(
+                    input.getInvoiceId(),
+                    input.getCustomerId(),
+                    input.getInvoiceDate(),
+                    input.getBillingAddress(),
+                    input.getBillingCity(),
+                    input.getBillingState(),
+                    input.getBillingCountry(),
+                    input.getBillingPostalCode(),
+                    input.getTotal()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -399,11 +372,12 @@ public class ChinookControllers {
             if (null == input) {
                 input = new InvoiceInput();
             }
+
             if (null == input.getCustomerId()) {
-                input.setCustomerId(customer.CustomerId());
+                input.setCustomerId(customer.getCustomerId());
             }
 
-            return spec(input).query(rowMapper).list();
+            return Invoices(input);
         }
 
         @SchemaMapping
@@ -412,53 +386,29 @@ public class ChinookControllers {
                 input = new InvoiceInput();
             }
             if (null == input.getInvoiceId()) {
-                input.setInvoiceId(invoiceLine.InvoiceId());
+                input.setInvoiceId(invoiceLine.getInvoiceId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        private static final RowMapper<ChinookModels.Invoice>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Invoice(
-                rs.getInt("InvoiceId"),
-                rs.getInt("CustomerId"),
-                rs.getString("InvoiceDate"),
-                rs.getString("BillingAddress"),
-                rs.getString("BillingCity"),
-                rs.getString("BillingState"),
-                rs.getString("BillingCountry"),
-                rs.getString("BillingPostalCode"),
-                rs.getFloat("Total")
-        );
-
-        private StatementSpec spec(final InvoiceInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "InvoiceId", input.getInvoiceId());
-            extractInputParameterAndValue(columns, params, "CustomerId", input.getCustomerId());
-            extractInputParameterAndValue(columns, params, "InvoiceDate", input.getInvoiceDate());
-            extractInputParameterAndValue(columns, params, "BillingAddress", input.getBillingAddress());
-            extractInputParameterAndValue(columns, params, "BillingCity", input.getBillingCity());
-            extractInputParameterAndValue(columns, params, "BillingState", input.getBillingState());
-            extractInputParameterAndValue(columns, params, "BillingCountry", input.getBillingCountry());
-            extractInputParameterAndValue(columns, params, "BillingPostalCode", input.getBillingPostalCode());
-            extractInputParameterAndValue(columns, params, "Total", input.getTotal());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return this.invoiceRepository.findOne(Example.of(new ChinookModels.Invoice(
+                    input.getInvoiceId(),
+                    input.getCustomerId(),
+                    input.getInvoiceDate(),
+                    input.getBillingAddress(),
+                    input.getBillingCity(),
+                    input.getBillingState(),
+                    input.getBillingCountry(),
+                    input.getBillingPostalCode(),
+                    input.getTotal()
+            ))).orElse(null);
         }
     }
 
     @Controller
-    public static class InvoiceLineController extends BaseController {
+    public static class InvoiceLineController {
+        private final InvoiceLineRepository invoiceLineRepository;
 
-        public InvoiceLineController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"InvoiceLine\"";
+        public InvoiceLineController(final InvoiceLineRepository invoiceLineRepository) {
+            this.invoiceLineRepository = invoiceLineRepository;
         }
 
         @QueryMapping
@@ -467,7 +417,16 @@ public class ChinookControllers {
                 input = new InvoiceLineInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.invoiceLineRepository.findAll(Example.of(new ChinookModels.InvoiceLine(
+                    input.getInvoiceLineId(),
+                    input.getInvoiceId(),
+                    input.getTrackId(),
+                    input.getUnitPrice(),
+                    input.getQuantity()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -476,10 +435,10 @@ public class ChinookControllers {
                 input = new InvoiceLineInput();
             }
             if (null == input.getInvoiceLineId()) {
-                input.setInvoiceId(invoice.InvoiceId());
+                input.setInvoiceId(invoice.getInvoiceId());
             }
 
-            return spec(input).query(rowMapper).list();
+            return InvoiceLines(input);
         }
 
         @SchemaMapping
@@ -488,45 +447,19 @@ public class ChinookControllers {
                 input = new InvoiceLineInput();
             }
             if (null == input.getTrackId()) {
-                input.setTrackId(track.TrackId());
+                input.setTrackId(track.getTrackId());
             }
 
-            return spec(input).query(rowMapper).list();
-        }
-
-        private static final RowMapper<ChinookModels.InvoiceLine>
-                rowMapper = (rs, rowNum) -> new ChinookModels.InvoiceLine(
-                rs.getInt("InvoiceLineId"),
-                rs.getInt("InvoiceId"),
-                rs.getInt("TrackId"),
-                rs.getFloat("UnitPrice"),
-                rs.getInt("Quantity")
-        );
-
-        private StatementSpec spec(final InvoiceLineInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "InvoiceLineId", input.getInvoiceLineId());
-            extractInputParameterAndValue(columns, params, "InvoiceId", input.getInvoiceId());
-            extractInputParameterAndValue(columns, params, "TrackId", input.getTrackId());
-            extractInputParameterAndValue(columns, params, "UnitPrice", input.getUnitPrice());
-            extractInputParameterAndValue(columns, params, "Quantity", input.getQuantity());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return InvoiceLines(input);
         }
     }
 
     @Controller
-    public static class MediaTypeController extends BaseController {
+    public static class MediaTypeController {
+        private final MediaTypeRepository mediaTypeRepository;
 
-        public MediaTypeController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"MediaType\"";
+        public MediaTypeController(final MediaTypeRepository mediaTypeRepository) {
+            this.mediaTypeRepository = mediaTypeRepository;
         }
 
         @QueryMapping
@@ -535,7 +468,13 @@ public class ChinookControllers {
                 input = new MediaTypeInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.mediaTypeRepository.findAll(Example.of(new ChinookModels.MediaType(
+                    input.getMediaTypeId(),
+                    input.getName()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -544,39 +483,22 @@ public class ChinookControllers {
                 input = new MediaTypeInput();
             }
             if (null == input.getMediaTypeId()) {
-                input.setMediaTypeId(track.MediaTypeId());
+                input.setMediaTypeId(track.getMediaTypeId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        private static final RowMapper<ChinookModels.MediaType>
-                rowMapper = (rs, rowNum) -> new ChinookModels.MediaType(
-                rs.getInt("MediaTypeId"),
-                rs.getString("Name")
-        );
-
-        private StatementSpec spec(final MediaTypeInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "MediaTypeId", input.getMediaTypeId());
-            extractInputParameterAndValue(columns, params, "Name", input.getName());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return this.mediaTypeRepository.findOne(Example.of(new ChinookModels.MediaType(
+                    input.getMediaTypeId(),
+                    input.getName()
+            ))).orElse(null);
         }
     }
 
     @Controller
-    public static class PlaylistController extends BaseController {
+    public static class PlaylistController {
+        private final PlaylistRepository playlistRepository;
 
-        public PlaylistController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"Playlist\"";
+        public PlaylistController(final PlaylistRepository playlistRepository) {
+            this.playlistRepository = playlistRepository;
         }
 
         @QueryMapping
@@ -585,7 +507,13 @@ public class ChinookControllers {
                 input = new PlaylistInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.playlistRepository.findAll(Example.of(new ChinookModels.Playlist(
+                    input.getPlaylistId(),
+                    input.getName()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -594,39 +522,22 @@ public class ChinookControllers {
                 input = new PlaylistInput();
             }
             if (null == input.getPlaylistId()) {
-                input.setPlaylistId(playlistTrack.PlaylistId());
+                input.setPlaylistId(playlistTrack.getPlaylistId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        private static final RowMapper<ChinookModels.Playlist>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Playlist(
-                rs.getInt("PlaylistId"),
-                rs.getString("Name")
-        );
-
-        private StatementSpec spec(final PlaylistInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "PlaylistId", input.getPlaylistId());
-            extractInputParameterAndValue(columns, params, "Name", input.getName());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return this.playlistRepository.findOne(Example.of(new ChinookModels.Playlist(
+                    input.getPlaylistId(),
+                    input.getName()
+            ))).orElse(null);
         }
     }
 
     @Controller
-    public static class PlaylistTrackController extends BaseController {
+    public static class PlaylistTrackController {
+        private final PlaylistTrackRepository playlistTrackRepository;
 
-        public PlaylistTrackController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"PlaylistTrack\"";
+        public PlaylistTrackController(final PlaylistTrackRepository playlistTrackRepository) {
+            this.playlistTrackRepository = playlistTrackRepository;
         }
 
         @QueryMapping
@@ -635,7 +546,13 @@ public class ChinookControllers {
                 input = new PlaylistTrackInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.playlistTrackRepository.findAll(Example.of(new ChinookModels.PlaylistTrack(
+                    input.getPlaylistId(),
+                    input.getTrackId()
+            )), pageRequest).toList();
         }
 
         @SchemaMapping
@@ -644,10 +561,10 @@ public class ChinookControllers {
                 input = new PlaylistTrackInput();
             }
             if (null == input.getPlaylistId()) {
-                input.setPlaylistId(playlist.PlaylistId());
+                input.setPlaylistId(playlist.getPlaylistId());
             }
 
-            return spec(input).query(rowMapper).list();
+            return PlaylistTracks(input);
         }
 
         @SchemaMapping
@@ -656,39 +573,19 @@ public class ChinookControllers {
                 input = new PlaylistTrackInput();
             }
             if (null == input.getTrackId()) {
-                input.setTrackId(track.TrackId());
+                input.setTrackId(track.getTrackId());
             }
 
-            return spec(input).query(rowMapper).list();
-        }
-
-        private static final RowMapper<ChinookModels.PlaylistTrack>
-                rowMapper = (rs, rowNum) -> new ChinookModels.PlaylistTrack(
-                rs.getInt("PlaylistId"),
-                rs.getInt("TrackId")
-        );
-
-        private StatementSpec spec(final PlaylistTrackInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
-
-            extractInputParameterAndValue(columns, params, "PlaylistId", input.getPlaylistId());
-            extractInputParameterAndValue(columns, params, "TrackId", input.getTrackId());
-
-            return createJdbcSpec(columns, params, input.getLimit());
+            return PlaylistTracks(input);
         }
     }
 
     @Controller
-    public static class TrackController extends BaseController {
+    public static class TrackController {
+        private final TrackRepository trackRepository;
 
-        public TrackController(final JdbcClient jdbcClient) {
-            super(jdbcClient);
-        }
-
-        @Override
-        public String getTablePrefix() {
-            return "\"Track\"";
+        public TrackController(final TrackRepository trackRepository) {
+            this.trackRepository = trackRepository;
         }
 
         @QueryMapping
@@ -697,31 +594,38 @@ public class ChinookControllers {
                 input = new TrackInput();
             }
 
-            return spec(input).query(rowMapper).list();
+            int limit = input.getLimit() > 0 ? input.getLimit() : Integer.MAX_VALUE;
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
+            return this.trackRepository.findAll(Example.of(new ChinookModels.Track(
+                    input.getTrackId(),
+                    input.getName(),
+                    input.getAlbumId(),
+                    input.getMediaTypeId(),
+                    input.getGenreId(),
+                    input.getComposer(),
+                    input.getMilliseconds(),
+                    input.getBytes(),
+                    input.getUnitPrice()
+            )), pageRequest).toList();
         }
 
-        @SchemaMapping
-        public List<ChinookModels.Track> Tracks(final ChinookModels.Album album, @Argument TrackInput input) {
+        private ChinookModels.Track Track(@Argument TrackInput input) {
             if (null == input) {
                 input = new TrackInput();
             }
-            if (null == input.getAlbumId()) {
-                input.setAlbumId(album.AlbumId());
-            }
 
-            return spec(input).query(rowMapper).list();
-        }
-
-        @SchemaMapping
-        public List<ChinookModels.Track> Tracks(final ChinookModels.Genre genre, @Argument TrackInput input) {
-            if (null == input) {
-                input = new TrackInput();
-            }
-            if (null == input.getGenreId()) {
-                input.setGenreId(genre.GenreId());
-            }
-
-            return spec(input).query(rowMapper).list();
+            return this.trackRepository.findOne(Example.of(new ChinookModels.Track(
+                    input.getTrackId(),
+                    input.getName(),
+                    input.getAlbumId(),
+                    input.getMediaTypeId(),
+                    input.getGenreId(),
+                    input.getComposer(),
+                    input.getMilliseconds(),
+                    input.getBytes(),
+                    input.getUnitPrice()
+            ))).orElse(null);
         }
 
         @SchemaMapping
@@ -730,22 +634,10 @@ public class ChinookControllers {
                 input = new TrackInput();
             }
             if (null == input.getTrackId()) {
-                input.setTrackId(invoiceLine.TrackId());
+                input.setTrackId(invoiceLine.getTrackId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
-        }
-
-        @SchemaMapping
-        public List<ChinookModels.Track> Tracks(final ChinookModels.MediaType mediaType, @Argument TrackInput input) {
-            if (null == input) {
-                input = new TrackInput();
-            }
-            if (null == input.getMediaTypeId()) {
-                input.setMediaTypeId(mediaType.MediaTypeId());
-            }
-
-            return spec(input).query(rowMapper).list();
+            return Track(input);
         }
 
         @SchemaMapping
@@ -754,41 +646,46 @@ public class ChinookControllers {
                 input = new TrackInput();
             }
             if (null == input.getTrackId()) {
-                input.setTrackId(playlistTrack.TrackId());
+                input.setTrackId(playlistTrack.getTrackId());
             }
 
-            return spec(input).query(rowMapper).optional().orElse(null);
+            return Track(input);
         }
 
-        private static final RowMapper<ChinookModels.Track>
-                rowMapper = (rs, rowNum) -> new ChinookModels.Track(
-                rs.getInt("TrackId"),
-                rs.getString("Name"),
-                rs.getInt("AlbumId"),
-                rs.getInt("GenreId"),
-                rs.getInt("MediaTypeId"),
-                rs.getString("Composer"),
-                rs.getInt("Milliseconds"),
-                rs.getInt("Bytes"),
-                rs.getFloat("UnitPrice")
-        );
+        @SchemaMapping
+        public List<ChinookModels.Track> Tracks(final ChinookModels.Album album, @Argument TrackInput input) {
+            if (null == input) {
+                input = new TrackInput();
+            }
+            if (null == input.getAlbumId()) {
+                input.setAlbumId(album.getAlbumId());
+            }
 
-        protected StatementSpec spec(final TrackInput input) {
-            List<String> columns = new ArrayList<>();
-            List<Object> params = new ArrayList<>();
+            return Tracks(input);
+        }
 
-            extractInputParameterAndValue(columns, params, "TrackId", input.getTrackId());
-            extractInputParameterAndValue(columns, params, "Name", input.getName());
-            extractInputParameterAndValue(columns, params, "AlbumId", input.getAlbumId());
-            extractInputParameterAndValue(columns, params, "MediaTypeId", input.getMediaTypeId());
-            extractInputParameterAndValue(columns, params, "GenreId", input.getGenreId());
-            extractInputParameterAndValue(columns, params, "Composer", input.getComposer());
-            extractInputParameterAndValue(columns, params, "Milliseconds", input.getComposer());
-            extractInputParameterAndValue(columns, params, "Bytes", input.getBytes());
-            extractInputParameterAndValue(columns, params, "UnitPrice", input.getUnitPrice());
+        @SchemaMapping
+        public List<ChinookModels.Track> Tracks(final ChinookModels.Genre genre, @Argument TrackInput input) {
+            if (null == input) {
+                input = new TrackInput();
+            }
+            if (null == input.getGenreId()) {
+                input.setGenreId(genre.getGenreId());
+            }
 
-            return createJdbcSpec(columns, params, input.getLimit());
+            return Tracks(input);
+        }
+
+        @SchemaMapping
+        public List<ChinookModels.Track> Tracks(final ChinookModels.MediaType mediaType, @Argument TrackInput input) {
+            if (null == input) {
+                input = new TrackInput();
+            }
+            if (null == input.getMediaTypeId()) {
+                input.setMediaTypeId(mediaType.getMediaTypeId());
+            }
+
+            return Tracks(input);
         }
     }
-
 }
